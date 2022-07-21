@@ -41,7 +41,7 @@ def waterfall_png(wf, name, f_start=None, f_stop=None, **kwargs):
     Removed automatic styling to imsave that cannot be changed by kwargs
     """
     # change to full file name
-    name = 'images/' + name + '.png'
+    name = name + '.png'
 
     # Load in the data from fil
     plot_f, plot_data = wf.grab_data(f_start=f_start, f_stop=f_stop)
