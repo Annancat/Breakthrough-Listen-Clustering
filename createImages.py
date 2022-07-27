@@ -39,9 +39,10 @@ if __name__ == '__main__':
                 try:
                     # Converts url into location on server.
                     script = subprocess.check_output(["~scroft/parsefile", str(cadenceFiles["data"][i]["url"])])
-                    # TODO: ask for script to replicate work for future use.
+                    "# TODO: ask for script to replicate work for future use.
                     path = str(script)[2:-3]  # Strips irrelevant characters from the returned output.
-                    # Max load is in gb. Only uses the resources it needs to load the .fil
+                    print(path)
+                    """# Max load is in gb. Only uses the resources it needs to load the .fil
                     fil = Waterfall(path, max_load=blimpy.calcload.calc_max_load(path))
                     name = fil.header["source_name"]
                     splice = 0
@@ -59,18 +60,18 @@ if __name__ == '__main__':
                     observation += 1
                     print("\n-----------------------------")
                     print("Completed temporary images.")
-                    print("-----------------------------\n")
+                    print("-----------------------------\n")"""
                 except:
                     print("Skipping cadence file at url " +
                           cur_url + "as the file size is too large to compute or file cannot be found.")
 
 
-        for i in range(0, splice + 1):
+        """for i in range(0, splice + 1):
             try:
                 print("Creating final image for splice " + str(i) +
                         " of target " + name)
                 modif.combine_pngs(name, i)
                 print("Completed creating images for cadence " + cur_url)
             except:
-                print("Skipping creating final image for cadence " + cur_url + "...")
+                print("Skipping creating final image for cadence " + cur_url + "...")"""
         cur_url = urls.readline()
