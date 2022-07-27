@@ -1,5 +1,6 @@
 import matplotlib
 matplotlib.use('TkAgg')
+import matplotlib.pyplot as plt
 import os, glob, shutil
 import blimpy.calcload
 import modified_functions as modif
