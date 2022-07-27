@@ -36,7 +36,7 @@ if __name__ == '__main__':
         splice = 0 #initialised here to avoid errors.
         for i in range(0, len(cadenceFiles)):  # Full observation split into 3 files for different frequency.
             if "0001.fil" in cadenceFiles[i]["url"]:
-                script = subprocess.check_output(["~scroft/parsefile", str(cadenceFiles[i]["url"])])
+                script = subprocess.check_output(["/home/scroft/parsefile", str(cadenceFiles[i]["url"])])
                 # TODO: ask for script to replicate work for future use.
                 path = str(script)[2:-3]  # Strips irrelevant characters from the returned output.
                 print(path)
