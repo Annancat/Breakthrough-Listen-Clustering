@@ -2,7 +2,7 @@ import os
 import glob
 import matplotlib
 import matplotlib.pyplot as plt
-from PIL import Image
+from PIL import Image, ImageOps
 
 matplotlib.use("agg")
 
@@ -81,22 +81,25 @@ def waterfall_png(wf, name, f_start=None, f_stop=None, **kwargs):
     normalized_plot_data = (plot_data - vmin) / (vmax - vmin)
 
     # Save waterfall plot at location
-    plt.imsave(name, normalized_plot_data, **kwargs)
+    plt.imsave(name, normalized_plot_data,**kwargs)
 
-def combine_pngs(name):
+def combine_pngs(name,splice = -1):
     r"""
     Create one png from the On and Off observation pngs created from waterfall_png.
     Parameters
     ----------
     name : Name of temp images to combine. Comes from header name of waterfall fil.
+    splice: Used if a cadence is split into a smaller range of frequencies.
     Notes
     -----
     Combine temp waterfall pngs into one png so that the CNN can observe them in the correct format.
     Images get combined vertically.
-    Might need a text file with data on frequency range.
     """
     # With current layout, there should always only be 6 temp images max per call.
-    files = sorted(glob.glob(os.path.join("tempImages", name + '*.png')))
+    if splice != -1:
+        files = sorted(glob.glob(os.path.join("tempImages", name + "*_" + str(splice) + ".png")))
+    else:
+        files = sorted(glob.glob(os.path.join("tempImages", name + "*.png")))
 
     images = [Image.open(x) for x in files]
     widths, heights = zip(*(i.size for i in images))
@@ -110,9 +113,11 @@ def combine_pngs(name):
     for im in images:
         new_im.paste(im, (0,y_offset))
         y_offset += im.size[1]
-
+    new_im = ImageOps.mirror(new_im)
     for file in files:
         os.remove(file) #So temp images do not get mixed up with future observations.
-
-    occurrences = sorted(glob.glob(os.path.join("images", name + '_*.png')))
-    new_im.save('images/' + name + "_" + str(len(occurrences)+1) + '.png')
+    if splice != -1:
+        new_im.save('images/' + name + "_Splice_" + str(splice) + '.png')
+    else:
+        occurrences = sorted(glob.glob(os.path.join("images", name + '_*.png')))
+        new_im.save('images/' + name + "_" + str(len(occurrences)+1) + '.png')

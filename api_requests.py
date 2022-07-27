@@ -1,9 +1,8 @@
 import requests
 import json
-
+import urllib
 URL = "http://seti.berkeley.edu/opendata"
 API_URL = "http://seti.berkeley.edu/opendata/api/"
-FORMAT = "filterbank"
 
 
 
@@ -43,14 +42,10 @@ class OpendataAPI:
         else:
             raise Exception(f"Fetching target data failed. Api error code {response.status_code}")
 
-    def get_cadence(self, url):
-        response = requests.get(f"{url}")
-        if response.status_code == 200:
-            print("Successfully fetched the target data with specified parameters")
-            #self.formatted_print(response.json())
-            return self.formatted_return(response.json())
-        else:
-            raise Exception(f"Fetching target data failed. Api error code {response.status_code}")
+    def get_cadence(self, target):
+        with urllib.request.urlopen(API_URL + 'get-cadence/-' + target) as url:
+            data = json.loads(url.read().decode())
+        return data["data"]
 
     def formatted_print(self, obj):
         text = json.dumps(obj, sort_keys=True, indent=4)
@@ -62,24 +57,40 @@ class OpendataAPI:
     def __init__(self):
         self.test_connection()
 
-if __name__ == "__main__":
+    def getURLS(self):
 
-    api_call = OpendataAPI()
-    #targets = api_call.list_targets()
-    #fileTypes = api_call.list_file_types()
-    #print(fileTypes[1])
-    #print(str(targets[1]))
-    parameters = {
-        "target": "",
-        "file-types": "filterbank",
-        "freq-start": 4000,
-        "cadence" : True
-    }
-    targets = api_call.query_files(parameters)
-    api_call.formatted_print(targets)
-    cadences = []
-    for target in targets["data"]:
-        cadences.append(target["url"] + " \n")
-    writer = open("urls.txt","w")
-    writer.writelines(cadences)
+        api_call = OpendataAPI()
+        targets = api_call.list_targets()
+        # fileTypes = api_call.list_file_types()
+        # print(api_call.formatted_print(fileTypes))
+        # print(str(targets[1]))
+        parameters = {
+            "target": "",
+            "telescopes": ["gbt"],
+            "file-types": "filterbank",
+            "cadence": True
+        }
+        cadences = []
+        with open("urls.txt", "a") as writer:
+            for i in range(0, len(targets)):  # does not get data if requesting with ""
+                parameters["target"] = targets[i]
+                print("Target " + str(i) + " of " + str(len(targets)))
+                print(parameters["target"])
+                try:
+                    cur_target = api_call.query_files(parameters)
+                    # api_call.formatted_print(cur_target)
+                    writer.writelines(cur_target["data"][0]["cadence_url"] + " \n")
+                except Exception:
+                    continue
 
+    def processURLS(self):
+        with open("urls.txt", "r") as reader:
+            urls = []
+            line = reader.readline()
+            while line != "":
+                urls.append(line[-9:-2])
+                line = reader.readline()
+        cleaned_urls = set(urls)
+        with open("urls_cleaned.txt", "w") as writer:
+            while len(cleaned_urls) > 0:
+                writer.writelines(str(cleaned_urls.pop()) + "\n")
