@@ -36,13 +36,17 @@ if __name__ == '__main__':
         splice = 0 #initialised here to avoid errors.
         for i in range(0, len(cadenceFiles)):  # Full observation split into 3 files for different frequency.
             if "0001.fil" in cadenceFiles[i]["url"]:
-                try:
+                script = subprocess.check_output(["~scroft/parsefile", str(cadenceFiles["data"][i]["url"])])
+                # TODO: ask for script to replicate work for future use.
+                path = str(script)[2:-3]  # Strips irrelevant characters from the returned output.
+                print(path)
+                """try:
                     # Converts url into location on server.
                     script = subprocess.check_output(["~scroft/parsefile", str(cadenceFiles["data"][i]["url"])])
                     # TODO: ask for script to replicate work for future use.
                     path = str(script)[2:-3]  # Strips irrelevant characters from the returned output.
                     print(path)
-                    """# Max load is in gb. Only uses the resources it needs to load the .fil
+                    # Max load is in gb. Only uses the resources it needs to load the .fil
                     fil = Waterfall(path, max_load=blimpy.calcload.calc_max_load(path))
                     name = fil.header["source_name"]
                     splice = 0
@@ -60,13 +64,13 @@ if __name__ == '__main__':
                     observation += 1
                     print("\n-----------------------------")
                     print("Completed temporary images.")
-                    print("-----------------------------\n")"""
+                    print("-----------------------------\n")
                 except:
                     print("Skipping cadence file at url " +
                           cur_url + "as the file size is too large to compute or file cannot be found.")
 
 
-        """for i in range(0, splice + 1):
+        for i in range(0, splice + 1):
             try:
                 print("Creating final image for splice " + str(i) +
                         " of target " + name)
