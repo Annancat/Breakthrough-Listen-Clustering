@@ -41,6 +41,8 @@ if __name__ == '__main__':
                                                                        "/datax").replace("datax/dl2", "datax2/dl")
                 print(path)
                 print(os.path.exists(path))
+                if not os.path.exists(path):
+                    raise Exception("Path does not exist!")
                 """try:
                     # Converts url into location on server.
                     script = subprocess.check_output(["~scroft/parsefile", str(cadenceFiles["data"][i]["url"])])
