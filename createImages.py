@@ -75,13 +75,14 @@ if __name__ == '__main__':
                 else:
                     name = target
 
-                if fil.header["center_freq"] not in frequencies:
-                    frequencies.append(round(fil.header["center_freq"], 2))
+                center_freq_ = cadenceFiles[i]["center_freq"]
+                if center_freq_ not in frequencies:
+                    frequencies.append(round(center_freq_, 2))
 
                 while curFreq <= maxFreq - freqRange:
                     modif.waterfall_png(fil, "tempImages/" +
                                         name + "_FREQ_" +
-                                        round(fil.header["center_freq"], 2) + "_" +
+                                        round(center_freq_, 2) + "_" +
                                         str(observation) + "_" +
                                         str(splice),
                                         f_start=curFreq, f_stop=curFreq + freqRange)
@@ -91,7 +92,7 @@ if __name__ == '__main__':
 
                 modif.waterfall_png(fil, "tempImages/" +
                                     name + "_FREQ_" +
-                                    round(fil.header["center_freq"], 2) + "_" +
+                                    round(center_freq_, 2) + "_" +
                                     str(observation) + "_" +
                                     str(splice),
                                     f_start=maxFreq - (maxFreq - curFreq), f_stop=maxFreq)
