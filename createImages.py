@@ -59,51 +59,52 @@ if __name__ == '__main__':
                     continue
                 else:
                     print(path + " exists.\n Trying to make temp images")
+                #try:
+                # Max load is in gb. Only uses the resources it needs to load the .fil
                 fil = Waterfall(path, max_load=blimpy.calcload.calc_max_load(path))
-                try:
-                    # Max load is in gb. Only uses the resources it needs to load the .fil
-                    fil = Waterfall(path, max_load=blimpy.calcload.calc_max_load(path))
-                    print("Loaded file as Waterfall.")
-                    if i == 0:
-                        target = fil.header["source_name"]
-                    splice = 0
-                    freqs = fil.get_freqs()
-                    maxFreq = freqs[0]
-                    curFreq = freqs[-1]
+                print("Loaded file as Waterfall.")
+                if i == 0:
+                    target = fil.header["source_name"]
+                splice = 0
+                freqs = fil.get_freqs()
+                maxFreq = freqs[0]
+                curFreq = freqs[-1]
 
-                    if fil.header["source_name"] != target:
-                        name = target +"_OFF"
-                    else:
-                        name = target
+                if fil.header["source_name"] != target:
+                    name = target + "_OFF"
+                else:
+                    name = target
 
-                    if fil.header["center_freq"] not in frequencies:
-                        frequencies.append(round(fil.header["center_freq"],2))
+                if fil.header["center_freq"] not in frequencies:
+                    frequencies.append(round(fil.header["center_freq"], 2))
 
-                    while curFreq <= maxFreq - freqRange:
-                        modif.waterfall_png(fil, "tempImages/" +
-                                            name + "_FREQ_" +
-                                            round(fil.header["center_freq"],2) + "_" +
-                                            str(observation) + "_" +
-                                            str(splice),
-                                            f_start=curFreq, f_stop=curFreq + freqRange)
-                        curFreq += freqRange
-                        splice += 1
-
+                while curFreq <= maxFreq - freqRange:
                     modif.waterfall_png(fil, "tempImages/" +
                                         name + "_FREQ_" +
-                                        round(fil.header["center_freq"],2) + "_" +
+                                        round(fil.header["center_freq"], 2) + "_" +
                                         str(observation) + "_" +
                                         str(splice),
-                                        f_start=maxFreq - (maxFreq - curFreq), f_stop=maxFreq)
+                                        f_start=curFreq, f_stop=curFreq + freqRange)
+                    print("Made Splice " + str(splice))
+                    curFreq += freqRange
+                    splice += 1
 
-                    observation += 1
-                    print("\n-----------------------------")
-                    print("Completed temporary images.")
-                    print("-----------------------------\n")
+                modif.waterfall_png(fil, "tempImages/" +
+                                    name + "_FREQ_" +
+                                    round(fil.header["center_freq"], 2) + "_" +
+                                    str(observation) + "_" +
+                                    str(splice),
+                                    f_start=maxFreq - (maxFreq - curFreq), f_stop=maxFreq)
+                print("Made Splice " + str(splice))
+                observation += 1
+                print("\n-----------------------------")
+                print("Completed temporary images.")
+                print("-----------------------------\n")
 
-                except:
+
+                """except:
                     print("Skipping cadence file at url " +
-                          cur_url + "as the file size is too large to compute or file cannot be found.")
+                          cur_url + "as the file size is too large to compute or file cannot be found.")"""
         for j in range(0,len(frequencies)):
             makeFinalImage(target, splice, frequencies[j])
 
