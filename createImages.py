@@ -59,7 +59,7 @@ if __name__ == '__main__':
                     continue
                 else:
                     print(path + " exists.\n Trying to make temp images")
-
+                fil = Waterfall(path, max_load=blimpy.calcload.calc_max_load(path))
                 try:
                     # Max load is in gb. Only uses the resources it needs to load the .fil
                     fil = Waterfall(path, max_load=blimpy.calcload.calc_max_load(path))
