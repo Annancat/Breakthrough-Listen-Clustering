@@ -47,19 +47,21 @@ if __name__ == '__main__':
         splice = 0  # initialised here to avoid errors.
 
         for i in range(0, len(cadenceFiles)):  # Full observation split into 3 files for different frequency.
-
             if "0001.fil" in cadenceFiles[i]["url"]:
                 # Converts url into location on server.
                 path = cadenceFiles[i]["url"].replace(
                     "http://", "/mnt_").replace(".ssl.berkeley.edu", "/datax").replace("datax/dl2", "datax2/dl")
-
+                print("Working on " + path)
                 if not os.path.exists(path):
                     print("Path" + path + "does not exist!\n\n")
                     continue
+                else:
+                    print(path + " exists.\n Trying to make temp images")
 
                 try:
                     # Max load is in gb. Only uses the resources it needs to load the .fil
                     fil = Waterfall(path, max_load=blimpy.calcload.calc_max_load(path))
+                    print("Loaded file as Waterfall.")
                     name = fil.header["source_name"]
                     splice = 0
                     freqs = fil.get_freqs()
