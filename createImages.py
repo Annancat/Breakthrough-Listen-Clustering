@@ -42,7 +42,7 @@ if __name__ == '__main__':
                 print(path)
                 print(os.path.exists(path))
                 if not os.path.exists(path):
-                    raise Exception("Path does not exist!")
+                    print("Path does not exist!\n\n")
                 """try:
                     # Converts url into location on server.
                     script = subprocess.check_output(["~scroft/parsefile", str(cadenceFiles["data"][i]["url"])])
