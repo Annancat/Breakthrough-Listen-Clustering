@@ -83,7 +83,7 @@ def waterfall_png(wf, name, f_start=None, f_stop=None, **kwargs):
     # Save waterfall plot at location
     plt.imsave(name, normalized_plot_data,**kwargs)
 
-def combine_pngs(name = "",splice = -1):
+def combine_pngs(name = "",splice = -1, freq = -1):
     r"""
     Create one png from the On and Off observation pngs created from waterfall_png.
     Parameters
@@ -99,16 +99,16 @@ def combine_pngs(name = "",splice = -1):
     # However it will not crash if given more.
     if name == "":
         if splice != -1:
-            files = sorted(glob.glob(os.path.join("tempImages", str(splice) + ".png")))
+            files = sorted(glob.glob(os.path.join("tempImages", "*_FREQ_" + str(freq) + "*" + str(splice) + ".png")))
             name = files[0][:-7]
         else:
-            files = sorted(glob.glob(os.path.join("tempImages", "*.png")))
+            files = sorted(glob.glob(os.path.join("tempImages", "*_FREQ_" + str(freq) + "*.png")))
             name = files[0][:-5]
     else:
         if splice != -1:
-            files = sorted(glob.glob(os.path.join("tempImages", name + "*_" + str(splice) + ".png")))
+            files = sorted(glob.glob(os.path.join("tempImages", name + "_FREQ_" + str(freq) + "*" + str(splice) + ".png")))
         else:
-            files = sorted(glob.glob(os.path.join("tempImages", name + "*.png")))
+            files = sorted(glob.glob(os.path.join("tempImages", name + "_FREQ_" + str(freq) + "*.png")))
 
     images = [Image.open(x) for x in files]
     widths, heights = zip(*(i.size for i in images))
@@ -126,7 +126,7 @@ def combine_pngs(name = "",splice = -1):
     for file in files:
         os.remove(file) #So temp images do not get mixed up with future observations.
     if splice != -1:
-        new_im.save('images/' + name + "_Splice_" + str(splice) + '.png')
+        new_im.save('images/' + name + "_FREQ_" + str(freq) + "_SPLICE_" + str(splice) + '.png')
     else:
         occurrences = sorted(glob.glob(os.path.join("images", name + '_*.png')))
-        new_im.save('images/' + name + "_" + str(len(occurrences)+1) + '.png')
+        new_im.save('images/' + name + + "_FREQ_" + str(freq) + "_" + str(len(occurrences)+1) + '.png')
