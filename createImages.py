@@ -82,7 +82,7 @@ if __name__ == '__main__':
                 while curFreq <= maxFreq - freqRange:
                     modif.waterfall_png(fil, "tempImages/" +
                                         name + "_FREQ_" +
-                                        round(center_freq_, 2) + "_" +
+                                        str(round(center_freq_, 2)) + "_" +
                                         str(observation) + "_" +
                                         str(splice),
                                         f_start=curFreq, f_stop=curFreq + freqRange)
@@ -92,7 +92,7 @@ if __name__ == '__main__':
 
                 modif.waterfall_png(fil, "tempImages/" +
                                     name + "_FREQ_" +
-                                    round(center_freq_, 2) + "_" +
+                                    str(round(center_freq_, 2)) + "_" +
                                     str(observation) + "_" +
                                     str(splice),
                                     f_start=maxFreq - (maxFreq - curFreq), f_stop=maxFreq)
