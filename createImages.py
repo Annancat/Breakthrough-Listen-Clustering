@@ -35,7 +35,7 @@ if __name__ == '__main__':
     os.mkdir("images")
     urls = open("urls_cleaned.txt", "r")  # URLs from api_requests.py
     cur_url = urls.readline()
-    freqRange = 200  # The frequency range in Mhz for each image
+    freqRange = 100  # The frequency range in Mhz for each image
 
     while cur_url != "":
         cadenceFiles = api.get_cadence(cur_url)
@@ -46,7 +46,7 @@ if __name__ == '__main__':
         target = cadenceFiles[0]["target"]
 
         for i in range(0, len(cadenceFiles)):  # Full observation split into 3 files for different frequency.
-            if "0002.fil" in cadenceFiles[i]["url"]:
+            if "0001.fil" in cadenceFiles[i]["url"]:
                 # Converts url into location on server.
                 path = cadenceFiles[i]["url"].replace(
                     "http://", "/mnt_").replace(".ssl.berkeley.edu", "/datax").replace("datax/dl2", "datax2/dl")
