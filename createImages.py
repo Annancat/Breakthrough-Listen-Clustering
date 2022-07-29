@@ -43,7 +43,7 @@ if __name__ == '__main__':
         name = ""
         frequencies = []
         splice = 0  # initialised here to avoid errors.
-        target = ""
+        target = cadenceFiles[0]["target"]
 
         for i in range(0, len(cadenceFiles)):  # Full observation split into 3 files for different frequency.
             if "0002.fil" in cadenceFiles[i]["url"]:
@@ -60,8 +60,6 @@ if __name__ == '__main__':
                 # Max load is in gb. Only uses the resources it needs to load the .fil
                 fil = Waterfall(path, max_load=blimpy.calcload.calc_max_load(path))
                 print("Loaded file as Waterfall.")
-                if i == 0:
-                    target = fil.header["source_name"]
                 splice = 0
                 freqs = fil.get_freqs()
                 maxFreq = freqs[0]
