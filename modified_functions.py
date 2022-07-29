@@ -102,12 +102,12 @@ def combine_pngs(name = "", part = -1, freq = -1):
     # However it will not crash if given more.
     if part != -1:
         files_on = sorted(
-            glob.glob(os.path.join("tempImages", "*_0__FREQ_" + str(freq) + "*" + str(part) + ".png")))
+            glob.glob(os.path.join("tempImages", "*_ON__FREQ_" + str(freq) + "*" + str(part) + ".png")))
         files_off = sorted(
-            glob.glob(os.path.join("tempImages", "*_1__FREQ_" + str(freq) + "*" + str(part) + ".png")))
+            glob.glob(os.path.join("tempImages", "*_OFF__FREQ_" + str(freq) + "*" + str(part) + ".png")))
     else:
-        files_on = sorted(glob.glob(os.path.join("tempImages", "*_0__FREQ_" + str(freq) + "*.png")))
-        files_off = sorted(glob.glob(os.path.join("tempImages", "*_1__FREQ_" + str(freq) + "*.png")))
+        files_on = sorted(glob.glob(os.path.join("tempImages", "*_ON__FREQ_" + str(freq) + "*.png")))
+        files_off = sorted(glob.glob(os.path.join("tempImages", "*_OFF__FREQ_" + str(freq) + "*.png")))
 
     if len(files_on) == 0:
         print("Couldn't find files for creating the final image!")
