@@ -133,11 +133,11 @@ def combine_pngs(name = "", part = -1, freq = -1):
         if i % 3 == 0:
             new_im = ImageOps.mirror(new_im)
             if part != -1:
-                new_im.save('images/' + name + "_FREQ_" + str(freq) + "_PART_" + str(part) + '_SPLIT_' + split + '.png')
+                new_im.save('images/' + name + "_FREQ_" + str(freq) + "_PART_" + str(part) + '_SPLIT_' + str(split) + '.png')
             else:
                 occurrences = sorted(glob.glob(os.path.join("images", name + '_*.png')))
                 new_im.save('images/' + name + "_FREQ_" + str(freq) + "_" + str(len(occurrences) + 1) + '_SPLIT_' +
-                            split + '.png')
+                            str(split) + '.png')
             new_im = Image.new('RGB', (max_width, total_height))
             y_offset = 0
             split +=1
