@@ -102,34 +102,48 @@ def combine_pngs(name = "",splice = -1, freq = -1):
     # However it will not crash if given more.
     if name == "":
         if splice != -1:
-            files = sorted(glob.glob(os.path.join("tempImages", "*_FREQ_" + str(freq) + "*" + str(splice) + ".png")))
-            name = files[0][:-7]
+            filesON = sorted(glob.glob(os.path.join("tempImages", "*_0_*_FREQ_" + str(freq) + "*" + str(splice) + ".png")))
+            name = filesON[0][:-7]
+            filesOFF = sorted(glob.glob(os.path.join("tempImages", "*_1_*_FREQ_" + str(freq) + "*" + str(splice) + ".png")))
         else:
-            files = sorted(glob.glob(os.path.join("tempImages", "*_FREQ_" + str(freq) + "*.png")))
-            name = files[0][:-5]
+            filesON = sorted(glob.glob(os.path.join("tempImages", "*_0_*_FREQ_" + str(freq) + "*.png")))
+            name = filesON[0][:-5]
+            filesOFF = sorted(glob.glob(os.path.join("tempImages", "*_1_*_FREQ_" + str(freq) + "*.png")))
+
     else:
         if splice != -1:
-            files = sorted(glob.glob(os.path.join("tempImages", name + "*_FREQ_" + str(freq) + "*" + str(splice) + ".png")))
+            filesON = sorted(glob.glob(os.path.join("tempImages", name + "*_0_*_FREQ_" + str(freq) + "*" + str(splice) + ".png")))
+            filesOFF = sorted(glob.glob(os.path.join("tempImages", name + "*_1_*_FREQ_" + str(freq) + "*" + str(splice) + ".png")))
         else:
-            files = sorted(glob.glob(os.path.join("tempImages", name + "*_FREQ_" + str(freq) + "*.png")))
-    if len(files) ==0:
+            filesON = sorted(glob.glob(os.path.join("tempImages", name + "*_0_*_FREQ_" + str(freq) + "*.png")))
+            filesOFF = sorted(glob.glob(os.path.join("tempImages", name + "*_1_*_FREQ_" + str(freq) + "*.png")))
+
+    if len(filesON) == 0:
         print("Couldn't find files for creating the final image!")
         return
-    images = [Image.open(x) for x in files]
-    widths, heights = zip(*(i.size for i in images))
+    imagesON = [Image.open(x) for x in filesON]
+    widths, heights = zip(*(i.size for i in imagesON))
 
-    max_width = max(widths)
-    total_height = sum(heights) # Images combined vertically.
+    imagesOFF = [Image.open(x) for x in filesOFF]
+    widths_OFF,heights_OFF = zip(*(i.size for i in imagesOFF))
+
+    max_width = max([max(widths),max(widths_OFF)])
+    total_height = sum(heights) + sum(heights_OFF) # Images combined vertically.
 
     new_im = Image.new('RGB', (max_width, total_height))
 
     y_offset = 0
-    for im in images:
-        new_im.paste(im, (0,y_offset))
-        y_offset += im.size[1]
+    for i in range(0,len(imagesON)):
+        new_im.paste(imagesON[i], (0,y_offset))
+        y_offset += imagesON[i].size[1]
+        new_im.paste(imagesOFF[i], (0,y_offset))
+        y_offset += imagesOFF[i].size[1]
+
     new_im = ImageOps.mirror(new_im)
-    for file in files:
+    for file in filesON:
         os.remove(file) #So temp images do not get mixed up with future observations.
+    for file in filesOFF:
+        os.remove(file)
     if splice != -1:
         new_im.save('images/' + name + "_FREQ_" + str(freq) + "_SPLICE_" + str(splice) + '.png')
     else:
