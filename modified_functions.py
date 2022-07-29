@@ -1,7 +1,5 @@
 import os
 import glob
-
-import blimpy
 import matplotlib
 import matplotlib.pyplot as plt
 from PIL import Image, ImageOps
@@ -14,6 +12,7 @@ import numpy as np
 # Blimpy imports
 import blimpy as bl
 from blimpy.utils import rebin
+from blimpy.stix import image_stitch
 
 MAX_IMSHOW_POINTS = (4096, 1268)
 
@@ -135,13 +134,13 @@ def combine_pngs(name = "", part = -1, freq = -1):
         if i % 3 == 0:
             #new_im = ImageOps.mirror(new_im)
             if part != -1:
-                blimpy.stix.image_stitch("v", png_collection=to_combine,path_saved_png=
+                image_stitch("v", png_collection=to_combine,path_saved_png=
                                          'images/' + name + "_FREQ_" + str(freq) +
                                          "_PART_" + str(part) + '_SPLIT_' + split + '.png')
                 #new_im.save('images/' + name + "_FREQ_" + str(freq) + "_PART_" + str(part) + '_SPLIT_' + split + '.png')
             else:
                 occurrences = sorted(glob.glob(os.path.join("images", name + '_*.png')))
-                blimpy.stix.image_stitch("v", png_collection=to_combine, path_saved_png=
+                image_stitch("v", png_collection=to_combine, path_saved_png=
                                             'images/' + name + "_FREQ_" + str(freq) + "_"
                                             + str(len(occurrences) + 1) + '_SPLIT_' +
                                             split + '.png')
