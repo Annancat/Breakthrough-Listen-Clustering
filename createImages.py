@@ -20,7 +20,7 @@ as the converter run would be even more costly than it already is!
 
 def makeFinalImage(target="", splice=-1, freq=-1):
     for i in range(0, splice + 1):
-        print("Creating final image for splice " + str(i) +
+        print("Creating final image for part " + str(i) +
                   " of current target")
         modif.combine_pngs(target,i,freq)
         print("Completed creating images for cadence " + cur_url)
@@ -42,7 +42,7 @@ if __name__ == '__main__':
         observation = 0
         name = ""
         frequencies = []
-        splice = 0  # initialised here to avoid errors.
+        part = 0  # initialised here to avoid errors.
         target = cadenceFiles[0]["target"]
 
         for i in range(0, len(cadenceFiles)):  # Full observation split into 3 files for different frequency.
@@ -60,15 +60,15 @@ if __name__ == '__main__':
                 # Max load is in gb. Only uses the resources it needs to load the .fil
                 fil = Waterfall(path, max_load=blimpy.calcload.calc_max_load(path))
                 print("Loaded file as Waterfall.")
-                splice = 0
+                part = 0
                 freqs = fil.get_freqs()
                 maxFreq = freqs[0]
                 curFreq = freqs[-1]
 
                 if fil.header["source_name"] != target:
-                    name = target + "_1_"
+                    name = target + "_1_" #OFF observation - not pointing at target
                 else:
-                    name = target + "_0_"
+                    name = target + "_0_" #ON observation - pointing at target
 
                 center_freq_ = cadenceFiles[i]["center_freq"]
                 if center_freq_ not in frequencies:
@@ -79,19 +79,19 @@ if __name__ == '__main__':
                                         name + "_FREQ_" +
                                         str(round(center_freq_, 2)) + "_" +
                                         str(observation) + "_" +
-                                        str(splice),
+                                        str(part),
                                         f_start=curFreq, f_stop=curFreq + freqRange)
-                    print("Made Splice " + str(splice))
+                    print("Made part " + str(part))
                     curFreq += freqRange
-                    splice += 1
+                    part += 1
 
                 modif.waterfall_png(fil, "tempImages/" +
                                     name + "_FREQ_" +
                                     str(round(center_freq_, 2)) + "_" +
                                     str(observation) + "_" +
-                                    str(splice),
+                                    str(part),
                                     f_start=maxFreq - (maxFreq - curFreq), f_stop=maxFreq)
-                print("Made Splice " + str(splice))
+                print("Made Splice " + str(part))
                 observation += 1
                 print("\n-----------------------------")
                 print("Completed temporary images.")
@@ -102,6 +102,6 @@ if __name__ == '__main__':
                     print("Skipping cadence file at url " +
                           cur_url + "as the file size is too large to compute or file cannot be found.")"""
         for j in range(0,len(frequencies)):
-            makeFinalImage(target, splice, frequencies[j])
+            makeFinalImage(target, part, frequencies[j])
 
         cur_url = urls.readline()

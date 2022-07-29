@@ -72,7 +72,7 @@ def waterfall_png(wf, name, f_start=None, f_stop=None, **kwargs):
               0.0)  # top
 
     # plot and scale intensity (log vs. linear)
-    if "_1_" in name:
+    if "_1__FREQ" in name:
         kwargs["cmap"] = kwargs.get("cmap", "inferno")
     else:
         kwargs["cmap"] = kwargs.get("cmap", "viridis")
@@ -86,13 +86,13 @@ def waterfall_png(wf, name, f_start=None, f_stop=None, **kwargs):
     # Save waterfall plot at location
     plt.imsave(name, normalized_plot_data,**kwargs)
 
-def combine_pngs(name = "",splice = -1, freq = -1):
+def combine_pngs(name = "", part = -1, freq = -1):
     r"""
     Create one png from the On and Off observation pngs created from waterfall_png.
     Parameters
     ----------
     name : Name of temp images to combine. Comes from header name of waterfall fil.
-    splice: Used if a cadence is split into a smaller range of frequencies.
+    part: Used if a cadence is split into a smaller range of frequencies.
     Notes
     -----
     Combine temp waterfall pngs into one png so that the CNN can observe them in the correct format.
@@ -100,52 +100,43 @@ def combine_pngs(name = "",splice = -1, freq = -1):
     """
     # With current layout, there should always only be 6 temp images max per call.
     # However it will not crash if given more.
-    if name == "":
-        if splice != -1:
-            filesON = sorted(glob.glob(os.path.join("tempImages", "*_0_*_FREQ_" + str(freq) + "*" + str(splice) + ".png")))
-            name = filesON[0][:-7]
-            filesOFF = sorted(glob.glob(os.path.join("tempImages", "*_1_*_FREQ_" + str(freq) + "*" + str(splice) + ".png")))
-        else:
-            filesON = sorted(glob.glob(os.path.join("tempImages", "*_0_*_FREQ_" + str(freq) + "*.png")))
-            name = filesON[0][:-5]
-            filesOFF = sorted(glob.glob(os.path.join("tempImages", "*_1_*_FREQ_" + str(freq) + "*.png")))
-
+    if part != -1:
+        files_on = sorted(
+            glob.glob(os.path.join("tempImages", name + "*_0__FREQ_" + str(freq) + "*" + str(part) + ".png")))
+        files_off = sorted(
+            glob.glob(os.path.join("tempImages", name + "*_1__FREQ_" + str(freq) + "*" + str(part) + ".png")))
     else:
-        if splice != -1:
-            filesON = sorted(glob.glob(os.path.join("tempImages", name + "*_0_*_FREQ_" + str(freq) + "*" + str(splice) + ".png")))
-            filesOFF = sorted(glob.glob(os.path.join("tempImages", name + "*_1_*_FREQ_" + str(freq) + "*" + str(splice) + ".png")))
-        else:
-            filesON = sorted(glob.glob(os.path.join("tempImages", name + "*_0_*_FREQ_" + str(freq) + "*.png")))
-            filesOFF = sorted(glob.glob(os.path.join("tempImages", name + "*_1_*_FREQ_" + str(freq) + "*.png")))
+        files_on = sorted(glob.glob(os.path.join("tempImages", name + "*_0__FREQ_" + str(freq) + "*.png")))
+        files_off = sorted(glob.glob(os.path.join("tempImages", name + "*_1__FREQ_" + str(freq) + "*.png")))
 
-    if len(filesON) == 0:
+    if len(files_on) == 0:
         print("Couldn't find files for creating the final image!")
         return
-    imagesON = [Image.open(x) for x in filesON]
-    widths, heights = zip(*(i.size for i in imagesON))
+    images_on = [Image.open(x) for x in files_on]
+    widths, heights = zip(*(i.size for i in images_on))
 
-    imagesOFF = [Image.open(x) for x in filesOFF]
-    widths_OFF,heights_OFF = zip(*(i.size for i in imagesOFF))
+    images_off = [Image.open(x) for x in files_off]
+    widths_off,heights_off = zip(*(i.size for i in images_off))
 
-    max_width = max([max(widths),max(widths_OFF)])
-    total_height = sum(heights) + sum(heights_OFF) # Images combined vertically.
+    max_width = max([max(widths),max(widths_off)])
+    total_height = sum(heights) + sum(heights_off) # Images combined vertically.
 
     new_im = Image.new('RGB', (max_width, total_height))
 
     y_offset = 0
-    for i in range(0,len(imagesON)):
-        new_im.paste(imagesON[i], (0,y_offset))
-        y_offset += imagesON[i].size[1]
-        new_im.paste(imagesOFF[i], (0,y_offset))
-        y_offset += imagesOFF[i].size[1]
+    for i in range(0,len(images_on)):
+        new_im.paste(images_on[i], (0,y_offset))
+        y_offset += images_on[i].size[1]
+        new_im.paste(images_off[i], (0,y_offset))
+        y_offset += images_off[i].size[1]
 
     new_im = ImageOps.mirror(new_im)
-    for file in filesON:
+    for file in files_on:
         os.remove(file) #So temp images do not get mixed up with future observations.
-    for file in filesOFF:
+    for file in files_off:
         os.remove(file)
-    if splice != -1:
-        new_im.save('images/' + name + "_FREQ_" + str(freq) + "_SPLICE_" + str(splice) + '.png')
+    if part != -1:
+        new_im.save('images/' + name + "_FREQ_" + str(freq) + "_PART_" + str(part) + '.png')
     else:
         occurrences = sorted(glob.glob(os.path.join("images", name + '_*.png')))
         new_im.save('images/' + name + + "_FREQ_" + str(freq) + "_" + str(len(occurrences)+1) + '.png')
