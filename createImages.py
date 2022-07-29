@@ -66,9 +66,9 @@ if __name__ == '__main__':
                 curFreq = freqs[-1]
 
                 if fil.header["source_name"] != target:
-                    name = target + "_1_" #OFF observation - not pointing at target
+                    name = target + "_OFF_" #OFF observation - not pointing at target
                 else:
-                    name = target + "_0_" #ON observation - pointing at target
+                    name = target + "_ON_" #ON observation - pointing at target
 
                 center_freq_ = cadenceFiles[i]["center_freq"]
                 if center_freq_ not in frequencies:
@@ -91,7 +91,7 @@ if __name__ == '__main__':
                                     str(observation) + "_" +
                                     str(part),
                                     f_start=maxFreq - (maxFreq - curFreq), f_stop=maxFreq)
-                print("Made Splice " + str(part))
+                print("Made part " + str(part))
                 observation += 1
                 print("\n-----------------------------")
                 print("Completed temporary images.")
