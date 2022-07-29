@@ -109,7 +109,9 @@ def combine_pngs(name = "",splice = -1, freq = -1):
             files = sorted(glob.glob(os.path.join("tempImages", name + "_FREQ_" + str(freq) + "*" + str(splice) + ".png")))
         else:
             files = sorted(glob.glob(os.path.join("tempImages", name + "_FREQ_" + str(freq) + "*.png")))
-
+    if len(files) ==0:
+        print("Couldn't find files for creating the final image!")
+        return
     images = [Image.open(x) for x in files]
     widths, heights = zip(*(i.size for i in images))
 
