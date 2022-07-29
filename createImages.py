@@ -16,7 +16,8 @@ Separated from api_requests.py so that the urls do not need to be gathered throu
 Assumes that it has access to the files via converting the urls and does not need to download them - downloading them
 as the converter run would be even more costly than it already is!
 """
-
+#TODO Overlap ranges
+#TODO Normalise data better
 
 def makeFinalImage(target="", splice=-1, freq=-1):
     for i in range(0, splice + 1):
@@ -25,8 +26,6 @@ def makeFinalImage(target="", splice=-1, freq=-1):
         modif.combine_pngs(target,i,freq)
         print("Completed creating images for cadence " + cur_url)
 
-
-# TODO find way to download files without ssh as a backup if someone does not have access.
 if __name__ == '__main__':
     api = api_requests.OpendataAPI()
     shutil.rmtree("tempImages")
@@ -70,14 +69,14 @@ if __name__ == '__main__':
                 else:
                     name = target + "_ON_" #ON observation - pointing at target
 
-                center_freq_ = cadenceFiles[i]["center_freq"]
+                center_freq_ = round(cadenceFiles[i]["center_freq"],2)
                 if center_freq_ not in frequencies:
-                    frequencies.append(round(center_freq_, 2))
+                    frequencies.append(center_freq_)
 
                 while curFreq <= maxFreq - freqRange:
                     modif.waterfall_png(fil, "tempImages/" +
                                         name + "_FREQ_" +
-                                        str(round(center_freq_, 2)) + "_" +
+                                        str(center_freq_) + "_" +
                                         str(observation) + "_" +
                                         str(part),
                                         f_start=curFreq, f_stop=curFreq + freqRange)
@@ -87,7 +86,7 @@ if __name__ == '__main__':
 
                 modif.waterfall_png(fil, "tempImages/" +
                                     name + "_FREQ_" +
-                                    str(round(center_freq_, 2)) + "_" +
+                                    str(center_freq_) + "_" +
                                     str(observation) + "_" +
                                     str(part),
                                     f_start=maxFreq - (maxFreq - curFreq), f_stop=maxFreq)
