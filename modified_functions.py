@@ -73,7 +73,7 @@ def waterfall_png(wf, name, f_start=None, f_stop=None, **kwargs):
 
     # plot and scale intensity (log vs. linear)
     if "_OFF" in name:
-        kwargs["viridis"] = kwargs.get("cmap", "viridis")
+        kwargs["cmap"] = kwargs.get("cmap", "inferno")
     else:
         kwargs["cmap"] = kwargs.get("cmap", "viridis")
     plot_data = 10.0 * np.log10(plot_data)
