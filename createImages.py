@@ -20,13 +20,10 @@ as the converter run would be even more costly than it already is!
 
 def makeFinalImage(target="", splice=-1, freq=-1):
     for i in range(0, splice + 1):
-        try:
-            print("Creating final image for splice " + str(i) +
+        print("Creating final image for splice " + str(i) +
                   " of current target")
-            modif.combine_pngs(target,i,freq)
-            print("Completed creating images for cadence " + cur_url)
-        except:
-            print("Skipping creating final image for cadence " + cur_url + "...")
+        modif.combine_pngs(target,i,freq)
+        print("Completed creating images for cadence " + cur_url)
 
 
 # TODO find way to download files without ssh as a backup if someone does not have access.
