@@ -66,9 +66,9 @@ if __name__ == '__main__':
                 curFreq = freqs[-1]
 
                 if fil.header["source_name"] != target:
-                    name = target + "_OFF"
+                    name = target + "1"
                 else:
-                    name = target
+                    name = target + "0"
 
                 center_freq_ = cadenceFiles[i]["center_freq"]
                 if center_freq_ not in frequencies:
