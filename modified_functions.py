@@ -12,7 +12,6 @@ import numpy as np
 # Blimpy imports
 import blimpy as bl
 from blimpy.utils import rebin
-from blimpy.stix import image_stitch
 
 MAX_IMSHOW_POINTS = (4096, 1268)
 
@@ -73,7 +72,10 @@ def waterfall_png(wf, name, f_start=None, f_stop=None, **kwargs):
               0.0)  # top
 
     # plot and scale intensity (log vs. linear)
-    kwargs["cmap"] = kwargs.get("cmap", "viridis")
+    if "_OFF__FREQ" in name:
+        kwargs["cmap"] = kwargs.get("cmap", "inferno")
+    else:
+        kwargs["cmap"] = kwargs.get("cmap", "viridis")
     plot_data = 10.0 * np.log10(plot_data)
 
     # get normalization parameters
@@ -100,9 +102,9 @@ def combine_pngs(name = "", part = -1, freq = -1):
     # However it will not crash if given more.
     if part != -1:
         files_on = sorted(
-            glob.glob(os.path.join("tempImages", "*_ON__FREQ_" + str(freq) + "*" + str(part) + ".png")))
+            glob.glob(os.path.join("tempImages", "*_0__FREQ_" + str(freq) + "*" + str(part) + ".png")))
         files_off = sorted(
-            glob.glob(os.path.join("tempImages", "*_OFF__FREQ_" + str(freq) + "*" + str(part) + ".png")))
+            glob.glob(os.path.join("tempImages", "*_1__FREQ_" + str(freq) + "*" + str(part) + ".png")))
     else:
         files_on = sorted(glob.glob(os.path.join("tempImages", "*_0__FREQ_" + str(freq) + "*.png")))
         files_off = sorted(glob.glob(os.path.join("tempImages", "*_1__FREQ_" + str(freq) + "*.png")))
@@ -110,7 +112,7 @@ def combine_pngs(name = "", part = -1, freq = -1):
     if len(files_on) == 0:
         print("Couldn't find files for creating the final image!")
         return
-    """images_on = [Image.open(x) for x in files_on]
+    images_on = [Image.open(x) for x in files_on]
     widths, heights = zip(*(i.size for i in images_on))
 
     images_off = [Image.open(x) for x in files_off]
@@ -121,37 +123,25 @@ def combine_pngs(name = "", part = -1, freq = -1):
 
     new_im = Image.new('RGB', (max_width, total_height))
 
-    y_offset = 0"""
+    y_offset = 0
     split = 0
-    to_combine = []
-    for i in range(0,len(files_on)):
-        """new_im.paste(images_on[i], (0,y_offset))
+    for i in range(0,len(images_on)):
+        new_im.paste(images_on[i], (0,y_offset))
         y_offset += images_on[i].size[1]
         new_im.paste(images_off[i], (0,y_offset))
-        y_offset += images_off[i].size[1]"""
-        to_combine.append(files_on[i])
-        to_combine.append(files_off[i])
+        y_offset += images_off[i].size[1]
         if i % 3 == 0:
-            #new_im = ImageOps.mirror(new_im)
+            new_im = ImageOps.mirror(new_im)
             if part != -1:
-                image_stitch("v", png_collection=to_combine,path_saved_png=
-                                         'images/' + name + "_FREQ_" + str(freq) +
-                                         "_PART_" + str(part) + '_SPLIT_' + split + '.png')
-                #new_im.save('images/' + name + "_FREQ_" + str(freq) + "_PART_" + str(part) + '_SPLIT_' + split + '.png')
+                new_im.save('images/' + name + "_FREQ_" + str(freq) + "_PART_" + str(part) + '_SPLIT_' + split + '.png')
             else:
                 occurrences = sorted(glob.glob(os.path.join("images", name + '_*.png')))
-                image_stitch("v", png_collection=to_combine, path_saved_png=
-                                            'images/' + name + "_FREQ_" + str(freq) + "_"
-                                            + str(len(occurrences) + 1) + '_SPLIT_' +
-                                            split + '.png')
-                occurrences+=1
-                #new_im.save('images/' + name + "_FREQ_" + str(freq) + "_" + str(len(occurrences) + 1) + '_SPLIT_' +
-                            #split + '.png')
-            #new_im = Image.new('RGB', (max_width, total_height))
-            #y_offset = 0
+                new_im.save('images/' + name + "_FREQ_" + str(freq) + "_" + str(len(occurrences) + 1) + '_SPLIT_' +
+                            split + '.png')
+            new_im = Image.new('RGB', (max_width, total_height))
+            y_offset = 0
             split +=1
             for file in files_on:
                 os.remove(file)  # So temp images do not get mixed up with future observations.
             for file in files_off:
                 os.remove(file)
-            to_combine = []
