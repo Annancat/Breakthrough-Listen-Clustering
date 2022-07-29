@@ -106,9 +106,9 @@ def combine_pngs(name = "",splice = -1, freq = -1):
             name = files[0][:-5]
     else:
         if splice != -1:
-            files = sorted(glob.glob(os.path.join("tempImages", name + "_FREQ_" + str(freq) + "*" + str(splice) + ".png")))
+            files = sorted(glob.glob(os.path.join("tempImages", name + "*_FREQ_" + str(freq) + "*" + str(splice) + ".png")))
         else:
-            files = sorted(glob.glob(os.path.join("tempImages", name + "_FREQ_" + str(freq) + "*.png")))
+            files = sorted(glob.glob(os.path.join("tempImages", name + "*_FREQ_" + str(freq) + "*.png")))
     if len(files) ==0:
         print("Couldn't find files for creating the final image!")
         return
