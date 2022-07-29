@@ -46,7 +46,7 @@ if __name__ == '__main__':
         target = cadenceFiles[0]["target"]
 
         for i in range(0, len(cadenceFiles)):  # Full observation split into 3 files for different frequency.
-            if "0001.fil" in cadenceFiles[i]["url"]:
+            if "0002.fil" in cadenceFiles[i]["url"]:
                 # Converts url into location on server.
                 path = cadenceFiles[i]["url"].replace(
                     "http://", "/mnt_").replace(".ssl.berkeley.edu", "/datax").replace("datax/dl2", "datax2/dl")
