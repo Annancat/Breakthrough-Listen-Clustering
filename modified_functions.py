@@ -1,7 +1,7 @@
 import os
 import glob
 
-import blimpy.stix
+import blimpy
 import matplotlib
 import matplotlib.pyplot as plt
 from PIL import Image, ImageOps
