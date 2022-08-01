@@ -153,9 +153,15 @@ def combine_pngs(name = "", part = -1, freq = -1):
             y_offset = 0
             split +=1
         for file in files_on:
-            os.remove(file)  # So temp images do not get mixed up with future observations.
+            try:
+                os.remove(file)
+            except:
+                continue# So temp images do not get mixed up with future observations.
         for file in files_off:
-            os.remove(file)
+            try:
+                os.remove(file)
+            except:
+                continue
 
     def sort2(x, y):
         r""" Return lowest value, highest value"""
