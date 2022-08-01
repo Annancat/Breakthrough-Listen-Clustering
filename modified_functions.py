@@ -142,7 +142,7 @@ def combine_pngs(name="", part=-1, freq=-1):
         y_offset += images_on[i].size[1]
         new_im.paste(images_off[i], (0, y_offset))
         y_offset += images_off[i].size[1]
-        if i % 3 == 0:
+        if i % 2 == 0:
             new_im = ImageOps.mirror(new_im)
             if part != -1:
                 new_im.save(
