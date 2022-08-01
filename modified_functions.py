@@ -8,6 +8,7 @@ from os.path import dirname, abspath, isdir
 import gc
 from argparse import ArgumentParser
 import logging
+
 logger_name = "stix"
 logger = logging.getLogger(logger_name)
 logger.setLevel(logging.INFO)
@@ -22,7 +23,6 @@ import blimpy as bl
 from blimpy.utils import rebin
 from blimpy import Waterfall
 from blimpy.plotting import plot_waterfall
-
 
 MAX_IMSHOW_POINTS = (4096, 1268)
 
@@ -95,9 +95,10 @@ def waterfall_png(wf, name, f_start=None, f_stop=None, **kwargs):
     normalized_plot_data = (plot_data - vmin) / (vmax - vmin)
 
     # Save waterfall plot at location
-    plt.imsave(name, normalized_plot_data,**kwargs)
+    plt.imsave(name, normalized_plot_data, **kwargs)
 
-def combine_pngs(name = "", part = -1, freq = -1):
+
+def combine_pngs(name="", part=-1, freq=-1):
     r"""
     Create one png from the On and Off observation pngs created from waterfall_png.
     Parameters
@@ -127,113 +128,129 @@ def combine_pngs(name = "", part = -1, freq = -1):
     widths, heights = zip(*(i.size for i in images_on))
 
     images_off = [Image.open(x) for x in files_off]
-    widths_off,heights_off = zip(*(i.size for i in images_off))
+    widths_off, heights_off = zip(*(i.size for i in images_off))
 
-    max_width = max([max(widths),max(widths_off)])
-    total_height = sum(heights) + sum(heights_off) # Images combined vertically.
+    max_width = max([max(widths), max(widths_off)])
+    total_height = sum(heights) + sum(heights_off)  # Images combined vertically.
 
     new_im = Image.new('RGB', (max_width, total_height))
 
     y_offset = 0
-    for i in range(0,len(images_on)):
-        new_im.paste(images_on[i], (0,y_offset))
+    version = 0
+    for i in range(0, len(images_on)):
+        new_im.paste(images_on[i], (0, y_offset))
         y_offset += images_on[i].size[1]
-        new_im.paste(images_off[i], (0,y_offset))
+        new_im.paste(images_off[i], (0, y_offset))
         y_offset += images_off[i].size[1]
-
+        if i % 3 == 0:
+            new_im = ImageOps.mirror(new_im)
+            if part != -1:
+                new_im.save(
+                    'images/' + name + "_FREQ_" + str(freq) + "_PART_" + str(part) + "_" + str(version) + '.png')
+            else:
+                occurrences = sorted(glob.glob(os.path.join("images", name + '_*.png')))
+                new_im.save('images/' + name + + "_FREQ_" + str(freq) + "_" + str(len(occurrences) + 1) + "_" +
+                            str(version) + '.png')
+            y_offset = 0
+            new_im = Image.new('RGB', (max_width, total_height))
+            version += 1
     new_im = ImageOps.mirror(new_im)
-    for file in files_on:
-        os.remove(file) #So temp images do not get mixed up with future observations.
-    for file in files_off:
-        os.remove(file)
     if part != -1:
-        new_im.save('images/' + name + "_FREQ_" + str(freq) + "_PART_" + str(part) + '.png')
+        new_im.save('images/' + name + "_FREQ_" + str(freq) + "_PART_" + str(part) + "_" + str(version) + '.png')
     else:
         occurrences = sorted(glob.glob(os.path.join("images", name + '_*.png')))
-        new_im.save('images/' + name + + "_FREQ_" + str(freq) + "_" + str(len(occurrences)+1) + '.png')
+        new_im.save(
+            'images/' + name + + "_FREQ_" + str(freq) + "_" + str(len(occurrences) + 1) + "_" + str(version) +
+            '.png')
 
-    def sort2(x, y):
-        r""" Return lowest value, highest value"""
-        if y < x:
-            return y, x
-        return x, y
+    for file in files_on:
+        os.remove(file)  # So temp images do not get mixed up with future observations.
+    for file in files_off:
+        os.remove(file)
 
-    def make_waterfall_plots(input_file, chunk_count, plot_dir, width, height, dpi, source_name=None):
-        r"""
-        Make waterfall plots of a given huge-ish file.
-    ​
-        Parameters
-        ----------
-        input_file : str
-            Path of Filterbank or HDF5 input file to plot in a stacked mode.
-        chunk_count : int
-            The number of chunks to divide the entire bandwidth into.
-        plot_dir : str
-            Directory for storing the PNG files.
-        width : float
-            Plot width in inches.
-        height : float
-            Plot height in inches.
-        dpi : int
-            Plot dots per inch.
-        source_name : str
-            Source name from the file header.
-        """
 
-        # Get directory path for storing PNG file
-        if plot_dir is None:
-            dirpath = dirname(abspath(input_file)) + "/"
-        else:
-            if not isdir(plot_dir):
-                os.mkdir(plot_dir)
-            dirpath = plot_dir
+def sort2(x, y):
+    r""" Return lowest value, highest value"""
+    if y < x:
+        return y, x
+    return x, y
 
-        # Calculate frequency boundary variables.
-        wf1 = Waterfall(input_file, load_data=False)
-        nf = wf1.n_channels_in_file
-        if nf % chunk_count != 0:
-            msg = "Number of frequency chunks ({}) does not evenly divide the number of frequencies ({})!" \
-                .format(chunk_count, nf)
-            logger.warning(msg)
-        fchunk_f_start = wf1.file_header["fch1"]
-        fchunk_size = int(nf / chunk_count)
-        fchunk_f_offset = fchunk_size * wf1.file_header["foff"]
-        fchunk_f_stop = fchunk_f_start + (fchunk_size - 1) * wf1.file_header["foff"]
 
-        # Produce the source_name to be used in the image title.
-        if source_name is None:
-            source_name = wf1.header["source_name"]
-            if source_name.upper() == "UNKNOWN":
-                source_name = wf1.header["rawdatafile"].replace(".0000.raw", "")
+def make_waterfall_plots(input_file, chunk_count, plot_dir, width, height, dpi, source_name=None):
+    r"""
+           Make waterfall plots of a given huge-ish file.
+           Parameters
+           ----------
+           input_file : str
+               Path of Filterbank or HDF5 input file to plot in a stacked mode.
+           chunk_count : int
+               The number of chunks to divide the entire bandwidth into.
+           plot_dir : str
+               Directory for storing the PNG files.
+           width : float
+               Plot width in inches.
+           height : float
+               Plot height in inches.
+           dpi : int
+               Plot dots per inch.
+           source_name : str
+               Source name from the file header.
+           """
 
-        # Begin PNG file collection.
-        png_collection = []
+    # Get directory path for storing PNG file
+    if plot_dir is None:
+        dirpath = dirname(abspath(input_file)) + "/"
+    else:
+        if not isdir(plot_dir):
+            os.mkdir(plot_dir)
+        dirpath = plot_dir
 
-        # Generate a plot/PNG for each frequency chunk.
-        logger.info("Image width = {}, height = {}, dpi = {}"
-                    .format(width, height, dpi))
+    # Calculate frequency boundary variables.
+    wf1 = Waterfall(input_file, load_data=False)
+    nf = wf1.n_channels_in_file
+    if nf % chunk_count != 0:
+        msg = "Number of frequency chunks ({}) does not evenly divide the number of frequencies ({})!" \
+            .format(chunk_count, nf)
+        logger.warning(msg)
+    fchunk_f_start = wf1.file_header["fch1"]
+    fchunk_size = int(nf / chunk_count)
+    fchunk_f_offset = fchunk_size * wf1.file_header["foff"]
+    fchunk_f_stop = fchunk_f_start + (fchunk_size - 1) * wf1.file_header["foff"]
 
-        for ii in range(0, chunk_count):
-            ii_lowest, ii_highest = sort2(fchunk_f_start, fchunk_f_stop)
+    # Produce the source_name to be used in the image title.
+    if source_name is None:
+        source_name = wf1.header["source_name"]
+        if source_name.upper() == "UNKNOWN":
+            source_name = wf1.header["rawdatafile"].replace(".0000.raw", "")
 
-            # read in data
-            wf = Waterfall(input_file, f_start=ii_lowest, f_stop=ii_highest)
+    # Begin PNG file collection.
+    png_collection = []
 
-            # Validate frequency range.
-            # Save the figures.
-            path_png = dirpath + source_name + "_chunk_{}".format(ii + 1) + ".png"
-            png_collection.append(path_png)
-            plt.figure(frameon=False)
-            plt.axis('off')
-            plt.imsave(path_png, dpi=dpi)#, bbox_inches='tight', pad_inches=0)
+    # Generate a plot/PNG for each frequency chunk.
+    logger.info("Image width = {}, height = {}, dpi = {}"
+                .format(width, height, dpi))
 
-            # Delete Waterfall object.
-            del wf
-            gc.collect()
-            plt.close("all")
+    for ii in range(0, chunk_count):
+        ii_lowest, ii_highest = sort2(fchunk_f_start, fchunk_f_stop)
 
-            # Prepare for next chunk.
-            fchunk_f_start += fchunk_f_offset
-            fchunk_f_stop += fchunk_f_offset
+        # read in data
+        wf = Waterfall(input_file, f_start=ii_lowest, f_stop=ii_highest)
 
-        return png_collection, source_name
+        # Validate frequency range.
+        # Save the figures.
+        path_png = dirpath + source_name + "_chunk_{}".format(ii + 1) + ".png"
+        png_collection.append(path_png)
+        plt.figure(frameon=False)
+        plt.axis('off')
+        plt.imsave(path_png, dpi=dpi)  # , bbox_inches='tight', pad_inches=0)
+
+        # Delete Waterfall object.
+        del wf
+        gc.collect()
+        plt.close("all")
+
+        # Prepare for next chunk.
+        fchunk_f_start += fchunk_f_offset
+        fchunk_f_stop += fchunk_f_offset
+
+    return png_collection, source_name
