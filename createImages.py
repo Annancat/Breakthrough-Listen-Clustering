@@ -21,8 +21,8 @@ as the converter run would be even more costly than it already is!
 # TODO Overlap ranges
 # TODO Normalise data better
 
-def makeFinalImage(target="", splice=-1, freq=-1):
-    for i in range(0, splice + 1):
+def makeFinalImage(target="", total_parts =-1, freq=-1):
+    for i in range(0, total_parts + 1):
         print("Creating final image for part " + str(i) +
               " of current target")
         modif.combine_pngs(target, i, freq)

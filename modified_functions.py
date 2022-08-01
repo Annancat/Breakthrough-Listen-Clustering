@@ -114,12 +114,12 @@ def combine_pngs(name="", part=-1, freq=-1):
     # However it will not crash if given more.
     if part != -1:
         files_on = sorted(
-            glob.glob(os.path.join("tempImages", name + "*_ON__FREQ_" + str(freq) + "*" + str(part) + ".png")))
+            glob.glob(os.path.join("tempImages", name + "*_ON__FREQ_" + str(freq) + "*_" + str(part) + ".png")))
         files_off = sorted(
-            glob.glob(os.path.join("tempImages", name + "*_OFF__FREQ_" + str(freq) + "*" + str(part) + ".png")))
+            glob.glob(os.path.join("tempImages", name + "*_OFF__FREQ_" + str(freq) + "*_" + str(part) + ".png")))
     else:
-        files_on = sorted(glob.glob(os.path.join("tempImages", name + "*_0__FREQ_" + str(freq) + "*.png")))
-        files_off = sorted(glob.glob(os.path.join("tempImages", name + "*_1__FREQ_" + str(freq) + "*.png")))
+        files_on = sorted(glob.glob(os.path.join("tempImages", name + "*_ON__FREQ_" + str(freq) + "*.png")))
+        files_off = sorted(glob.glob(os.path.join("tempImages", name + "*_OFF__FREQ_" + str(freq) + "*.png")))
 
     if len(files_on) == 0:
         print("Couldn't find files for creating the final image!")
@@ -131,7 +131,7 @@ def combine_pngs(name="", part=-1, freq=-1):
     widths_off, heights_off = zip(*(i.size for i in images_off))
 
     max_width = max([max(widths), max(widths_off)])
-    total_height = sum(heights) + sum(heights_off)  # Images combined vertically.
+    total_height = sum(heights[0]*3) + sum(heights_off[0]*3)  # Images combined vertically.
 
     new_im = Image.new('RGB', (max_width, total_height))
 
