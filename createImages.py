@@ -47,7 +47,7 @@ if __name__ == '__main__':
         part = 0  # initialised here to avoid errors.
         target = cadenceFiles[0]["target"]
 
-        for i in range(0, len(cadenceFiles)):  # Full observation split into 3 files for different frequency.
+        for i in range(0, len(cadenceFiles)):   # Full observation split into 3 files for different frequency.
             if "0002.fil" in cadenceFiles[i]["url"]:
                 # Converts url into location on server.
                 path = cadenceFiles[i]["url"].replace(
