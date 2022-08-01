@@ -90,6 +90,7 @@ if __name__ == '__main__':
                     print("Made part " + str(part))
                     curFreq += freqRange
                     part += 1
+                    del fil
                 fil = Waterfall(path, max_load=blimpy.calcload.calc_max_load(path),
                                 f_start=maxFreq - (maxFreq - curFreq)-20, f_stop=maxFreq)
                 modif.waterfall_png(fil, "tempImages/" +
@@ -99,6 +100,7 @@ if __name__ == '__main__':
                                     str(part))
                 print("Made part " + str(part))
                 observation += 1
+                del fil
                 print("\n-----------------------------")
                 print("Completed temporary images.")
                 print("-----------------------------\n")
@@ -106,7 +108,6 @@ if __name__ == '__main__':
                 """except:
                     print("Skipping cadence file at url " +
                           cur_url + "as the file size is too large to compute or file cannot be found.")"""
-        del fil
         for j in range(0, len(frequencies)):
             makeFinalImage(target, part, frequencies[j])
 
