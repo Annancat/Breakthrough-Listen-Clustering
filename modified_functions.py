@@ -3,6 +3,14 @@ import glob
 import matplotlib
 import matplotlib.pyplot as plt
 from PIL import Image, ImageOps
+import sys
+from os.path import dirname, abspath, isdir
+import gc
+from argparse import ArgumentParser
+import logging
+logger_name = "stix"
+logger = logging.getLogger(logger_name)
+logger.setLevel(logging.INFO)
 
 matplotlib.use("agg")
 
@@ -12,6 +20,9 @@ import numpy as np
 # Blimpy imports
 import blimpy as bl
 from blimpy.utils import rebin
+from blimpy import Waterfall
+from blimpy.plotting import plot_waterfall
+
 
 MAX_IMSHOW_POINTS = (4096, 1268)
 
@@ -145,3 +156,89 @@ def combine_pngs(name = "", part = -1, freq = -1):
                 os.remove(file)  # So temp images do not get mixed up with future observations.
             for file in files_off:
                 os.remove(file)
+
+    def sort2(x, y):
+        r""" Return lowest value, highest value"""
+        if y < x:
+            return y, x
+        return x, y
+
+    def make_waterfall_plots(input_file, chunk_count, plot_dir, width, height, dpi, source_name=None):
+        r"""
+        Make waterfall plots of a given huge-ish file.
+    ​
+        Parameters
+        ----------
+        input_file : str
+            Path of Filterbank or HDF5 input file to plot in a stacked mode.
+        chunk_count : int
+            The number of chunks to divide the entire bandwidth into.
+        plot_dir : str
+            Directory for storing the PNG files.
+        width : float
+            Plot width in inches.
+        height : float
+            Plot height in inches.
+        dpi : int
+            Plot dots per inch.
+        source_name : str
+            Source name from the file header.
+        """
+
+        # Get directory path for storing PNG file
+        if plot_dir is None:
+            dirpath = dirname(abspath(input_file)) + "/"
+        else:
+            if not isdir(plot_dir):
+                os.mkdir(plot_dir)
+            dirpath = plot_dir
+
+        # Calculate frequency boundary variables.
+        wf1 = Waterfall(input_file, load_data=False)
+        nf = wf1.n_channels_in_file
+        if nf % chunk_count != 0:
+            msg = "Number of frequency chunks ({}) does not evenly divide the number of frequencies ({})!" \
+                .format(chunk_count, nf)
+            logger.warning(msg)
+        fchunk_f_start = wf1.file_header["fch1"]
+        fchunk_size = int(nf / chunk_count)
+        fchunk_f_offset = fchunk_size * wf1.file_header["foff"]
+        fchunk_f_stop = fchunk_f_start + (fchunk_size - 1) * wf1.file_header["foff"]
+
+        # Produce the source_name to be used in the image title.
+        if source_name is None:
+            source_name = wf1.header["source_name"]
+            if source_name.upper() == "UNKNOWN":
+                source_name = wf1.header["rawdatafile"].replace(".0000.raw", "")
+
+        # Begin PNG file collection.
+        png_collection = []
+
+        # Generate a plot/PNG for each frequency chunk.
+        logger.info("Image width = {}, height = {}, dpi = {}"
+                    .format(width, height, dpi))
+
+        for ii in range(0, chunk_count):
+            ii_lowest, ii_highest = sort2(fchunk_f_start, fchunk_f_stop)
+
+            # read in data
+            wf = Waterfall(input_file, f_start=ii_lowest, f_stop=ii_highest)
+
+            # Validate frequency range.
+            # Save the figures.
+            path_png = dirpath + source_name + "_chunk_{}".format(ii + 1) + ".png"
+            png_collection.append(path_png)
+            plt.figure(frameon=False)
+            plt.axis('off')
+            plt.imsave(path_png, dpi=dpi)#, bbox_inches='tight', pad_inches=0)
+
+            # Delete Waterfall object.
+            del wf
+            gc.collect()
+            plt.close("all")
+
+            # Prepare for next chunk.
+            fchunk_f_start += fchunk_f_offset
+            fchunk_f_stop += fchunk_f_offset
+
+        return png_collection, source_name
