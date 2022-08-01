@@ -131,7 +131,7 @@ def combine_pngs(name="", part=-1, freq=-1):
     widths_off, heights_off = zip(*(i.size for i in images_off))
 
     max_width = max([max(widths), max(widths_off)])
-    total_height = sum(heights[0]*3) + sum(heights_off[0]*3)  # Images combined vertically.
+    total_height = (heights[0]*3) + (heights_off[0]*3)  # Images combined vertically.
 
     new_im = Image.new('RGB', (max_width, total_height))
 
