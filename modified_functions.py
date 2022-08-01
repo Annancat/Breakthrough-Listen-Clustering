@@ -137,7 +137,7 @@ def combine_pngs(name="", part=-1, freq=-1):
 
     y_offset = 0
     version = 0
-    len = 0
+    length = 0
     for i in range(0, len(images_on)):
         new_im.paste(images_on[i], (0, y_offset))
         y_offset += images_on[i].size[1]
