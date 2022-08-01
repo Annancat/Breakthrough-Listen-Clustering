@@ -37,7 +37,7 @@ if __name__ == '__main__':
     os.mkdir("images")
     urls = open("urls_cleaned.txt", "r")  # URLs from api_requests.py
     cur_url = urls.readline()
-    freqRange = 100  # The frequency range in Mhz for each image
+    freqRange = 50  # The frequency range in Mhz for each image
 
     while cur_url != "":
         cadenceFiles = api.get_cadence(cur_url)
@@ -79,7 +79,7 @@ if __name__ == '__main__':
 
                 while curFreq <= maxFreq - freqRange:
                     # reading large files causes an error in get_data . Attempted work around!
-                    fil = Waterfall(path, max_load=blimpy.calcload.calc_max_load(path), load_data=False,
+                    fil = Waterfall(path, max_load=blimpy.calcload.calc_max_load(path),
                                     f_start=curFreq, f_stop=curFreq + freqRange)
                     modif.waterfall_png(fil, "tempImages/" +
                                         name + "_FREQ_" +
@@ -89,7 +89,7 @@ if __name__ == '__main__':
                     print("Made part " + str(part))
                     curFreq += freqRange
                     part += 1
-                fil = Waterfall(path, max_load=blimpy.calcload.calc_max_load(path), load_data=False,
+                fil = Waterfall(path, max_load=blimpy.calcload.calc_max_load(path),
                                 f_start=maxFreq - (maxFreq - curFreq), f_stop=maxFreq)
                 modif.waterfall_png(fil, "tempImages/" +
                                     name + "_FREQ_" +
