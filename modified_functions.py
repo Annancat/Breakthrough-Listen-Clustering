@@ -157,14 +157,15 @@ def combine_pngs(name="", part=-1, freq=-1):
             y_offset = 0
             new_im = Image.new('RGB', (max_width, total_height))
             version += 1
-    new_im = ImageOps.mirror(new_im)
-    if part != -1:
-        new_im.save('images/' + name + "_FREQ_" + str(freq) + "_PART_" + str(part) + "_" + str(version) + '.png')
-    else:
-        occurrences = sorted(glob.glob(os.path.join("images", name + '_*.png')))
-        new_im.save(
-            'images/' + name + + "_FREQ_" + str(freq) + "_" + str(len(occurrences) + 1) + "_" + str(version) +
-            '.png')
+    if length != 0:
+        new_im = ImageOps.mirror(new_im)
+        if part != -1:
+            new_im.save('images/' + name + "_FREQ_" + str(freq) + "_PART_" + str(part) + "_" + str(version) + '.png')
+        else:
+            occurrences = sorted(glob.glob(os.path.join("images", name + '_*.png')))
+            new_im.save(
+                'images/' + name + + "_FREQ_" + str(freq) + "_" + str(len(occurrences) + 1) + "_" + str(version) +
+                '.png')
 
     for file in files_on:
         os.remove(file)  # So temp images do not get mixed up with future observations.
