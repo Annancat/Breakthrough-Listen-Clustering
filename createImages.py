@@ -79,6 +79,7 @@ if __name__ == '__main__':
 
                 while curFreq <= maxFreq - freqRange:
                     # reading large files causes an error in get_data . Attempted work around!
+                    # Same premise as make_waterfall_plots in blimpy.stix but still cannot handle the 0001 files?
                     fil = Waterfall(path, max_load=blimpy.calcload.calc_max_load(path),
                                     f_start=curFreq, f_stop=curFreq + freqRange+20)
                     modif.waterfall_png(fil, "tempImages/" +
@@ -105,6 +106,7 @@ if __name__ == '__main__':
                 """except:
                     print("Skipping cadence file at url " +
                           cur_url + "as the file size is too large to compute or file cannot be found.")"""
+        del fil
         for j in range(0, len(frequencies)):
             makeFinalImage(target, part, frequencies[j])
 

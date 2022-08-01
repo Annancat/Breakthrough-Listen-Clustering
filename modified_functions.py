@@ -113,9 +113,9 @@ def combine_pngs(name = "", part = -1, freq = -1):
     # However it will not crash if given more.
     if part != -1:
         files_on = sorted(
-            glob.glob(os.path.join("tempImages", name + "*_0__FREQ_" + str(freq) + "*" + str(part) + ".png")))
+            glob.glob(os.path.join("tempImages", name + "*_ON__FREQ_" + str(freq) + "*" + str(part) + ".png")))
         files_off = sorted(
-            glob.glob(os.path.join("tempImages", name + "*_1__FREQ_" + str(freq) + "*" + str(part) + ".png")))
+            glob.glob(os.path.join("tempImages", name + "*_OFF__FREQ_" + str(freq) + "*" + str(part) + ".png")))
     else:
         files_on = sorted(glob.glob(os.path.join("tempImages", name + "*_0__FREQ_" + str(freq) + "*.png")))
         files_off = sorted(glob.glob(os.path.join("tempImages", name + "*_1__FREQ_" + str(freq) + "*.png")))
