@@ -54,7 +54,7 @@ if __name__ == '__main__':
                     "http://", "/mnt_").replace(".ssl.berkeley.edu", "/datax").replace("datax/dl2", "datax2/dl")
                 print("Working on " + path)
                 if not os.path.exists(path):
-                    print("Path" + path + "does not exist!\n\n")
+                    print("Path" + path + " does not exist!\n\n")
                     continue
                 else:
                     print(path + " exists.\n Trying to make temp images")
