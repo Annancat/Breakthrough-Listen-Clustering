@@ -152,10 +152,10 @@ def combine_pngs(name = "", part = -1, freq = -1):
             new_im = Image.new('RGB', (max_width, total_height))
             y_offset = 0
             split +=1
-            for file in files_on:
-                os.remove(file)  # So temp images do not get mixed up with future observations.
-            for file in files_off:
-                os.remove(file)
+        for file in files_on:
+            os.remove(file)  # So temp images do not get mixed up with future observations.
+        for file in files_off:
+            os.remove(file)
 
     def sort2(x, y):
         r""" Return lowest value, highest value"""
