@@ -60,7 +60,7 @@ if __name__ == '__main__':
                     print(path + " exists.\n Trying to make temp images")
                 # try:
                 # Max load is in gb. Only uses the resources it needs to load the .fil
-                fil = Waterfall(path, max_load=blimpy.calcload.calc_max_load(path),
+                fil = Waterfall(path, load_data=False, max_load=blimpy.calcload.calc_max_load(path),
                                 f_start=cadenceFiles[i]["center_freq"], f_stop=cadenceFiles[i]["center_freq"] + 1)
                 print("Loaded file as Waterfall.")
                 part = 0
@@ -79,7 +79,7 @@ if __name__ == '__main__':
 
                 while curFreq <= maxFreq - freqRange:
                     # reading large files causes an error in get_data . Attempted work around!
-                    fil = Waterfall(path, max_load=blimpy.calcload.calc_max_load(path),
+                    fil = Waterfall(path, max_load=blimpy.calcload.calc_max_load(path), load_data=False,
                                     f_start=curFreq, f_stop=curFreq + freqRange)
                     modif.waterfall_png(fil, "tempImages/" +
                                         name + "_FREQ_" +
@@ -89,7 +89,7 @@ if __name__ == '__main__':
                     print("Made part " + str(part))
                     curFreq += freqRange
                     part += 1
-                fil = Waterfall(path, max_load=blimpy.calcload.calc_max_load(path),
+                fil = Waterfall(path, max_load=blimpy.calcload.calc_max_load(path), load_data=False,
                                 f_start=maxFreq - (maxFreq - curFreq), f_stop=maxFreq)
                 modif.waterfall_png(fil, "tempImages/" +
                                     name + "_FREQ_" +
