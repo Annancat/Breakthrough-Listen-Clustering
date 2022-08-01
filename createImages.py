@@ -48,7 +48,7 @@ if __name__ == '__main__':
         target = cadenceFiles[0]["target"]
 
         for i in range(0, len(cadenceFiles)):   # Full observation split into 3 files for different frequency.
-            if "0001.fil" in cadenceFiles[i]["url"]:
+            if "0002.fil" in cadenceFiles[i]["url"]:
                 # Converts url into location on server.
                 path = cadenceFiles[i]["url"].replace(
                     "http://", "/mnt_").replace(".ssl.berkeley.edu", "/datax").replace("datax/dl2", "datax2/dl")
@@ -80,7 +80,7 @@ if __name__ == '__main__':
                 while curFreq <= maxFreq - freqRange:
                     # reading large files causes an error in get_data . Attempted work around!
                     fil = Waterfall(path, max_load=blimpy.calcload.calc_max_load(path),
-                                    f_start=curFreq, f_stop=curFreq + freqRange)
+                                    f_start=curFreq, f_stop=curFreq + freqRange+20)
                     modif.waterfall_png(fil, "tempImages/" +
                                         name + "_FREQ_" +
                                         str(center_freq_) + "_" +
@@ -90,7 +90,7 @@ if __name__ == '__main__':
                     curFreq += freqRange
                     part += 1
                 fil = Waterfall(path, max_load=blimpy.calcload.calc_max_load(path),
-                                f_start=maxFreq - (maxFreq - curFreq), f_stop=maxFreq)
+                                f_start=maxFreq - (maxFreq - curFreq)-20, f_stop=maxFreq)
                 modif.waterfall_png(fil, "tempImages/" +
                                     name + "_FREQ_" +
                                     str(center_freq_) + "_" +
