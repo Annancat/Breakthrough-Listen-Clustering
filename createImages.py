@@ -37,7 +37,7 @@ if __name__ == '__main__':
     os.mkdir("images")
     urls = open("urls_cleaned.txt", "r")  # URLs from api_requests.py
     cur_url = urls.readline()
-    freqRange = 50  # The frequency range in Mhz for each image
+    freqRange = 100  # The frequency range in Mhz for each image
 
     while cur_url != "":
         cadenceFiles = api.get_cadence(cur_url)
