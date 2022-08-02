@@ -8,6 +8,7 @@ from blimpy import Waterfall
 import subprocess
 import api_requests
 import urllib
+import math
 
 """
 Made for converting filterbank files into waterfall pngs to be fed
@@ -21,7 +22,7 @@ as the converter run would be even more costly than it already is!
 # TODO Overlap ranges
 # TODO Normalise data better
 
-def makeFinalImage(target="", total_parts =-1, freq=-1):
+def makeFinalImage(target="", total_parts=-1, freq=-1):
     for i in range(0, total_parts + 1):
         print("Creating final image for part " + str(i) +
               " of current target")
@@ -38,6 +39,7 @@ if __name__ == '__main__':
     urls = open("urls_cleaned.txt", "r")  # URLs from api_requests.py
     cur_url = urls.readline()
     freqRange = 50  # The frequency range in Mhz for each image
+    cross_over = 10  # How much the splits cross over in Mhz
 
     while cur_url != "":
         cadenceFiles = api.get_cadence(cur_url)
@@ -47,7 +49,7 @@ if __name__ == '__main__':
         part = 0  # initialised here to avoid errors.
         target = cadenceFiles[0]["target"]
 
-        for i in range(0, len(cadenceFiles)):   # Full observation split into 3 files for different frequency.
+        for i in range(0, len(cadenceFiles)):  # Full observation split into 3 files for different frequency.
             if "0001.fil" in cadenceFiles[i]["url"]:
                 # Converts url into location on server.
                 path = cadenceFiles[i]["url"].replace(
@@ -57,31 +59,44 @@ if __name__ == '__main__':
                     print("Path" + path + " does not exist!\n\n")
                     continue
                 else:
-                    print(path + " exists.\n Trying to make temp images")
+                    print(path + " exists.\nTrying to make temp images")
                 # try:
                 # Max load is in gb. Only uses the resources it needs to load the .fil
-                fil = Waterfall(path, load_data=False, max_load=blimpy.calcload.calc_max_load(path),
-                                f_start=cadenceFiles[i]["center_freq"], f_stop=cadenceFiles[i]["center_freq"] + 1)
-                print("Loaded file as Waterfall.")
+                fil = Waterfall(path, load_data=False)
+                print("Getting frequencies from file.")
                 part = 0
                 freqs = fil.get_freqs()
                 maxFreq = freqs[0]
-                curFreq = freqs[-1]
+                curFreq = int(math.ceil(freqs[-1]))
 
                 if cadenceFiles[i]["target"] != target:
                     name = target + "_OFF_"  # OFF observation - not pointing at target
                 else:
                     name = target + "_ON_"  # ON observation - pointing at target
-                #Cadence files have different center frequencies.
+                # Cadence files have different center frequencies.
                 center_freq_ = round(cadenceFiles[i]["center_freq"], 2)
                 if center_freq_ not in frequencies:
                     frequencies.append(center_freq_)
+
+                fil = Waterfall(path, max_load=blimpy.calcload.calc_max_load(path) + 0.5,
+                                 f_stop=curFreq + freqRange + cross_over)
+                print("Loaded slice.")
+                modif.waterfall_png(fil, "tempImages/" +
+                                    name + "_FREQ_" +
+                                    str(center_freq_) + "_" +
+                                    str(observation) + "_" +
+                                    str(part))
+                print("Made part " + str(part))
+                curFreq += freqRange
+                part += 1
+                del fil
 
                 while curFreq <= maxFreq - freqRange:
                     # reading large files causes an error in get_data . Attempted work around!
                     # Same premise as make_waterfall_plots in blimpy.stix but still cannot handle the 0001 files?
                     fil = Waterfall(path, max_load=blimpy.calcload.calc_max_load(path) + 0.5,
-                                    f_start=curFreq, f_stop=curFreq + freqRange+10)
+                                    f_start=curFreq, f_stop=curFreq + freqRange + cross_over)
+                    print("Loaded slice.")
                     modif.waterfall_png(fil, "tempImages/" +
                                         name + "_FREQ_" +
                                         str(center_freq_) + "_" +
@@ -92,7 +107,8 @@ if __name__ == '__main__':
                     part += 1
                     del fil
                 fil = Waterfall(path, max_load=blimpy.calcload.calc_max_load(path) + 0.5,
-                                f_start=maxFreq - (maxFreq - curFreq)-10, f_stop=maxFreq)
+                                f_start=int(round(maxFreq - (maxFreq - curFreq)) - cross_over))
+                print("Loaded slice.")
                 modif.waterfall_png(fil, "tempImages/" +
                                     name + "_FREQ_" +
                                     str(center_freq_) + "_" +
