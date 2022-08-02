@@ -37,7 +37,7 @@ if __name__ == '__main__':
     os.mkdir("images")
     urls = open("urls_cleaned.txt", "r")  # URLs from api_requests.py
     cur_url = urls.readline()
-    freqRange = 100  # The frequency range in Mhz for each image
+    freqRange = 50  # The frequency range in Mhz for each image
 
     while cur_url != "":
         cadenceFiles = api.get_cadence(cur_url)
@@ -48,7 +48,7 @@ if __name__ == '__main__':
         target = cadenceFiles[0]["target"]
 
         for i in range(0, len(cadenceFiles)):   # Full observation split into 3 files for different frequency.
-            if "0002.fil" in cadenceFiles[i]["url"]:
+            if "0001.fil" in cadenceFiles[i]["url"]:
                 # Converts url into location on server.
                 path = cadenceFiles[i]["url"].replace(
                     "http://", "/mnt_").replace(".ssl.berkeley.edu", "/datax").replace("datax/dl2", "datax2/dl")
@@ -72,7 +72,7 @@ if __name__ == '__main__':
                     name = target + "_OFF_"  # OFF observation - not pointing at target
                 else:
                     name = target + "_ON_"  # ON observation - pointing at target
-
+                #Cadence files have different center frequencies.
                 center_freq_ = round(cadenceFiles[i]["center_freq"], 2)
                 if center_freq_ not in frequencies:
                     frequencies.append(center_freq_)
@@ -80,8 +80,8 @@ if __name__ == '__main__':
                 while curFreq <= maxFreq - freqRange:
                     # reading large files causes an error in get_data . Attempted work around!
                     # Same premise as make_waterfall_plots in blimpy.stix but still cannot handle the 0001 files?
-                    fil = Waterfall(path, max_load=blimpy.calcload.calc_max_load(path),
-                                    f_start=curFreq, f_stop=curFreq + freqRange+20)
+                    fil = Waterfall(path, max_load=blimpy.calcload.calc_max_load(path) + 0.5,
+                                    f_start=curFreq, f_stop=curFreq + freqRange+10)
                     modif.waterfall_png(fil, "tempImages/" +
                                         name + "_FREQ_" +
                                         str(center_freq_) + "_" +
@@ -91,8 +91,8 @@ if __name__ == '__main__':
                     curFreq += freqRange
                     part += 1
                     del fil
-                fil = Waterfall(path, max_load=blimpy.calcload.calc_max_load(path),
-                                f_start=maxFreq - (maxFreq - curFreq)-20, f_stop=maxFreq)
+                fil = Waterfall(path, max_load=blimpy.calcload.calc_max_load(path) + 0.5,
+                                f_start=maxFreq - (maxFreq - curFreq)-10, f_stop=maxFreq)
                 modif.waterfall_png(fil, "tempImages/" +
                                     name + "_FREQ_" +
                                     str(center_freq_) + "_" +
