@@ -61,9 +61,9 @@ def waterfall_png(wf, name, f_start=None, f_stop=None, **kwargs):
     dec_fac_x, dec_fac_y = 1, 1
 
     # rebinning data to plot correctly with fewer points
-    """try:
+    try:
         if plot_data.shape[0] > MAX_IMSHOW_POINTS[0]:
-            dec_fac_x = plot_data.shape[0] / MAX_IMSHOW_POINTS[0]
+            dec_fac_x = int(np.ceil(plot_data.shape[0] / MAX_IMSHOW_POINTS[0]))
         if plot_data.shape[1] > MAX_IMSHOW_POINTS[1]:
             dec_fac_y = int(np.ceil(plot_data.shape[1] / MAX_IMSHOW_POINTS[1]))
         plot_data = rebin(plot_data, dec_fac_x, dec_fac_y)
@@ -72,7 +72,7 @@ def waterfall_png(wf, name, f_start=None, f_stop=None, **kwargs):
               .format(plot_data.shape, plot_f.shape))
         print("Waterfall info for {}:".format(wf.filename))
         wf.info()
-        raise ValueError("*** Something is wrong with the grab_data output!")"""
+        raise ValueError("*** Something is wrong with the grab_data output!")
 
     # determine extent of the plotting panel for imshow
     nints = plot_data.shape[0]
