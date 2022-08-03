@@ -8,6 +8,7 @@ from os.path import dirname, abspath, isdir
 import gc
 from argparse import ArgumentParser
 import logging
+from skimage.exposure import match_histograms
 
 logger_name = "stix"
 logger = logging.getLogger(logger_name)
@@ -136,9 +137,13 @@ def combine_pngs(name="", part=-1, freq=-1):
     version = 0
     length = 0
     for i in range(0, len(images_on)):
-        new_im.paste(images_on[i], (0, y_offset))
-        y_offset += images_on[i].size[1]
-        new_im.paste(images_off[i], (0, y_offset))
+        if y_offset ==0:
+            new_im.paste(images_on[i], (0, y_offset))
+            y_offset += images_on[i].size[1]
+        else:
+            new_im.paste(match_histograms(images_on[i],images_off[i-1],channel_axis=-1), (0, y_offset))
+            y_offset += images_on[i].size[1]
+        new_im.paste(match_histograms(images_off[i],images_on[i],channel_axis=-1), (0, y_offset))
         y_offset += images_off[i].size[1]
         length +=2
         if length >= 6:
