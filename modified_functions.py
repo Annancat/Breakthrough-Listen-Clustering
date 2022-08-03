@@ -123,10 +123,10 @@ def combine_pngs(name="", part=-1, freq=-1):
     if len(files_on) == 0:
         print("Couldn't find files for creating the final image!")
         return
-    images_on = [Image.open(x) for x in files_on]
+    images_on = [asarray(Image.open(x)) for x in files_on]
     widths, heights = zip(*(i.size for i in images_on))
 
-    images_off = [Image.open(x) for x in files_off]
+    images_off = [asarray(Image.open(x)) for x in files_off]
     widths_off, heights_off = zip(*(i.size for i in images_off))
 
     max_width = max([max(widths), max(widths_off)])
@@ -139,12 +139,12 @@ def combine_pngs(name="", part=-1, freq=-1):
     length = 0
     for i in range(0, len(images_on)):
         if y_offset ==0:
-            new_im.paste(images_on[i], (0, y_offset))
+            new_im.paste(Image.fromarray(images_on[i]), (0, y_offset))
             y_offset += images_on[i].size[1]
         else:
-            new_im.paste(Image.fromarray(match_histograms(asarray(images_on[i]),asarray(images_off[i-1]))), (0, y_offset))
+            new_im.paste(Image.fromarray(match_histograms(images_on[i],images_off[i-1])), (0, y_offset))
             y_offset += images_on[i].size[1]
-        new_im.paste(Image.fromarray(match_histograms(asarray(images_off[i]),asarray(images_on[i]))), (0, y_offset))
+        new_im.paste(Image.fromarray(match_histograms(images_off[i],images_on[i])), (0, y_offset))
         y_offset += images_off[i].size[1]
         length +=2
         if length >= 6:
