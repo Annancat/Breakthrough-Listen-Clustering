@@ -141,12 +141,13 @@ def combine_pngs(name="", part=-1, freq=-1):
     length = 0
     for i in range(0, len(images_on)):
         if y_offset ==0:
+            ref = images_on[i]
             new_im.paste(Image.fromarray(images_on[i]), (0, y_offset))
             y_offset += heights[i]
         else:
-            new_im.paste(Image.fromarray(match_histograms(images_on[i],images_off[i-1],channel_axis = -1),'RGB'), (0, y_offset))
+            new_im.paste(Image.fromarray(match_histograms(images_on[i],ref,channel_axis = 3),'RGB'), (0, y_offset))
             y_offset += heights[i]
-        new_im.paste(Image.fromarray(match_histograms(images_off[i],images_on[i],channel_axis = -1),'RGB'), (0, y_offset))
+        new_im.paste(Image.fromarray(match_histograms(images_off[i],ref,channel_axis = 3),'RGB'), (0, y_offset))
         y_offset += heights_off[i]
         length +=2
         if length >= 6:
