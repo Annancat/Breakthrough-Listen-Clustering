@@ -9,6 +9,7 @@ import gc
 from argparse import ArgumentParser
 import logging
 from skimage.exposure import match_histograms
+from numpy import asarray
 
 logger_name = "stix"
 logger = logging.getLogger(logger_name)
@@ -141,9 +142,9 @@ def combine_pngs(name="", part=-1, freq=-1):
             new_im.paste(images_on[i], (0, y_offset))
             y_offset += images_on[i].size[1]
         else:
-            new_im.paste(match_histograms(images_on[i],images_off[i-1]), (0, y_offset))
+            new_im.paste(Image.fromarray(match_histograms(asarray(images_on[i]),asarray(images_off[i-1]))), (0, y_offset))
             y_offset += images_on[i].size[1]
-        new_im.paste(match_histograms(images_off[i],images_on[i]), (0, y_offset))
+        new_im.paste(Image.fromarray(match_histograms(asarray(images_off[i]),asarray(images_on[i]))), (0, y_offset))
         y_offset += images_off[i].size[1]
         length +=2
         if length >= 6:
