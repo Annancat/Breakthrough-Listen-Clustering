@@ -124,13 +124,12 @@ def combine_pngs(name="", part=-1, freq=-1):
     if len(files_on) == 0:
         print("Couldn't find files for creating the final image!")
         return
-    images = [Image.open(x) for x in files_on]
-    widths, heights = zip(*(i.size for i in images))
-    images_on = [asarray(x) for x in images]
+    images_on = [Image.open(x) for x in files_on]
+    widths, heights = zip(*(i.size for i in images_on))
 
-    images = [Image.open(x) for x in files_off]
-    widths_off, heights_off = zip(*(i.size for i in images))
-    images_off = [asarray(x) for x in images]
+    images_off = [Image.open(x) for x in files_off]
+    widths_off, heights_off = zip(*(i.size for i in images_off))
+
     max_width = max([max(widths), max(widths_off)])
     total_height = (heights[0]*3) + (heights_off[0]*3)  # Images combined vertically.
 
@@ -141,17 +140,15 @@ def combine_pngs(name="", part=-1, freq=-1):
     length = 0
     for i in range(0, len(images_on)):
         if y_offset ==0:
-            ref = images_on[i]
-            new_im.paste(Image.fromarray(images_on[i]), (0, y_offset))
-            y_offset += heights[i]
-        else:
-            new_im.paste(Image.fromarray(match_histograms(images_on[i],ref,channel_axis = 2),'RGB'), (0, y_offset))
-            y_offset += heights[i]
-        new_im.paste(Image.fromarray(match_histograms(images_off[i],ref,channel_axis = 2),'RGB'), (0, y_offset))
+            ref = asarray(images_on[i])
+        new_im.paste(images_on[i], (0, y_offset))
+        y_offset += heights[i]
+        new_im.paste(images_off[i], (0, y_offset))
         y_offset += heights_off[i]
         length +=2
         if length >= 6:
             length = 0
+            new_im = match_histograms(asarray(new_im),ref,channel_axis=-1)
             new_im = ImageOps.mirror(new_im)
             if part != -1:
                 new_im.save(
