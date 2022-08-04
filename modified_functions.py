@@ -70,7 +70,7 @@ def waterfall_png(wf, name, f_start=None, f_stop=None,part=0, **kwargs,):
     if part != 0:
         ref = Image.open(name + "0.png")
         print(str(ref.mode) + " " + str(ref.size))
-        print(str(normalized_plot_data[0]))
+        print(str(np.size(normalized_plot_data)))
         #normalized_plot_data = match_histograms(normalized_plot_data,ref)
 
     name = name + str(part) + '.png'
