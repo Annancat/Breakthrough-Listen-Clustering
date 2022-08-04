@@ -13,7 +13,7 @@ MAX_IMSHOW_POINTS = (4096, 1268)
 matplotlib.use("agg")
 
 
-def waterfall_png(wf, name, f_start=None, f_stop=None,part=0, **kwargs,):
+def waterfall_png(wf, name, f_start=None, f_stop=None,observation=0, part = 0, **kwargs,):
     r"""
     Modified from blimpy.stax.plot_waterfall.
     Create waterfall png from data in a .fil or .h5 file.
@@ -67,12 +67,12 @@ def waterfall_png(wf, name, f_start=None, f_stop=None,part=0, **kwargs,):
     v_min = plot_data.min()
     v_max = plot_data.max()
     normalized_plot_data = (plot_data - v_min) / (v_max - v_min)
-    if part != 0:
-        ref = np.array(Image.open(name + "0.png"))
+    if observation != 0:
+        ref = np.array(Image.open(name + "0_" +  str(part) + '.png'))
         cur = np.array(Image.fromarray(normalized_plot_data,mode="RGBA"))
         normalized_plot_data = match_histograms(cur,ref)
     normalized_plot_data = Image.fromarray(normalized_plot_data,mode="RGBA")
-    name = name + str(part) + '.png'
+    name = name + str(observation) + "_" +  str(part) + '.png'
     # Save waterfall plot at location
     # Really the only thing that has changed from plot_waterfall apart from removing axis and figure modifications.
     normalized_plot_data.save(name,**kwargs)
