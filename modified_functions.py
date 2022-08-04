@@ -68,10 +68,9 @@ def waterfall_png(wf, name, f_start=None, f_stop=None,part=0, **kwargs,):
     v_max = plot_data.max()
     normalized_plot_data = (plot_data - v_min) / (v_max - v_min)
     if part != 0:
-        ref = Image.open(name + "0.png")
+        ref = Image.open(name + "0.png",mode="F")
         print(str(ref.mode) + " " + str(ref.size))
         cur = Image.fromarray(normalized_plot_data,mode="RGBA")
-        print(str(cur.mode) + " " + str(cur.size))
         #normalized_plot_data = match_histograms(normalized_plot_data,ref)
 
     name = name + str(part) + '.png'
@@ -120,7 +119,7 @@ def combine_pngs(name="", part=-1, freq=-1):
     max_width = max([max(widths_on), max(widths_off)])
     total_height = (heights_on[0] * 3) + (heights_off[0] * 3)  # Images combined vertically.
 
-    new_im = Image.new('L', (max_width, total_height))
+    new_im = Image.new('RGBA', (max_width, total_height))
 
     y_offset = 0
     version = 0
