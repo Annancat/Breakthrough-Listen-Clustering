@@ -74,11 +74,10 @@ def waterfall_png(wf, name, f_start=None, f_stop=None,observation=0, part = 0, *
             normalized_plot_data = match_histograms(cur,ref,multichannel=True)
         except:
             observation = 0
-    normalized_plot_data = Image.fromarray(normalized_plot_data,mode="RGBA")
     name = name + str(observation) + "_" + str(part) + '.png'
     # Save waterfall plot at location
     # Really the only thing that has changed from plot_waterfall apart from removing axis and figure modifications.
-    normalized_plot_data.save(name,**kwargs)
+    plt.imsave(name,normalized_plot_data,**kwargs)
 
 
 # TODO Normalise data better!
@@ -130,20 +129,10 @@ def combine_pngs(name="", part=-1, freq=-1):
     ref_off = []
 
     for i in range(0, len(images_on)):
-
-        if y_offset == 0:
-            ref_on = skimage.io.imread(files_on[i])
-            ref_off = skimage.io.imread(files_off[i])
-            new_im.paste(images_on[i], (0, y_offset))
-            y_offset += heights_on[i]
-            new_im.paste(images_off[i], (0, y_offset))
-            y_offset += heights_off[i]
-
-        else:
-            new_im.paste(images_on[i],(0,y_offset))
-            y_offset += heights_on[i]
-            new_im.paste(images_off[i],(0, y_offset))
-            y_offset += heights_off[i]
+        new_im.paste(images_on[i],(0,y_offset))
+        y_offset += heights_on[i]
+        new_im.paste(images_off[i],(0, y_offset))
+        y_offset += heights_off[i]
 
         length += 2
 
