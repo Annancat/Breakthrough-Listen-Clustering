@@ -69,8 +69,7 @@ def waterfall_png(wf, name, f_start=None, f_stop=None,observation=0, part = 0, *
     normalized_plot_data = (plot_data - v_min) / (v_max - v_min)
     if observation > 0:
         try:
-            ref = np.array(os.open(name + "0_" + str(part) + '.png'))
-            normalized_plot_data = np.array(Image.fromarray(normalized_plot_data))
+            ref = np.array(Image.open(name + "0_" + str(part) + '.png'))
             normalized_plot_data = match_histograms(normalized_plot_data,ref)
         except:
             observation = 0
