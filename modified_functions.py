@@ -60,7 +60,7 @@ def waterfall_png(wf, name, f_start=None, f_stop=None,part=0, **kwargs,):
         raise ValueError("*** Something is wrong with the grab_data output!")
 
     # plot and scale intensity (log vs. linear)
-    kwargs["cmap"] = kwargs.get("cmap", "gray")
+    kwargs["cmap"] = kwargs.get("cmap", "viridis")
     plot_data = 10.0 * np.log10(plot_data)
 
     # get normalization parameters
