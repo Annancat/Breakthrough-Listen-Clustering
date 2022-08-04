@@ -1,7 +1,6 @@
 import glob
 import os
 
-import cv2
 import matplotlib
 import matplotlib.pyplot as plt
 import numpy as np
@@ -9,6 +8,7 @@ from PIL import Image, ImageOps
 from blimpy.utils import rebin
 from numpy import asarray
 from skimage.exposure import match_histograms
+from skimage.io import imread
 
 MAX_IMSHOW_POINTS = (4096, 1268)
 matplotlib.use("agg")
@@ -126,17 +126,17 @@ def combine_pngs(name="", part=-1, freq=-1):
     for i in range(0, len(images_on)):
 
         if y_offset == 0:
-            ref_on = cv2.imread(files_on[i])
-            ref_off = cv2.imread(files_off[i])
+            ref_on = imread(files_on[i])
+            ref_off = imread(files_off[i])
             new_im.paste(images_on[i], (0, y_offset))
             y_offset += heights_on[i]
             new_im.paste(images_off[i], (0, y_offset))
             y_offset += heights_off[i]
 
         else:
-            new_im.paste(Image.fromarray(match_histograms(cv2.imread(files_on[i]), ref_on, multichannel = True),'RGB'),(0, y_offset))
+            new_im.paste(Image.fromarray(match_histograms(imread(files_on[i]), ref_on, multichannel = True),'RGB'),(0, y_offset))
             y_offset += heights_on[i]
-            new_im.paste(Image.fromarray(match_histograms(cv2.imread(files_off[i]), ref_off, multichannel = True),'RGB'),(0, y_offset))
+            new_im.paste(Image.fromarray(match_histograms(imread(files_off[i]), ref_off, multichannel = True),'RGB'),(0, y_offset))
             y_offset += heights_off[i]
 
         length += 2
