@@ -133,9 +133,9 @@ def combine_pngs(name="", part=-1, freq=-1):
             y_offset += heights_off[i]
 
         else:
-            new_im.paste(Image.fromarray(match_histograms(skimage.io.imread(files_on[i]), ref_on),(0, y_offset)))
+            new_im.paste(images_on[i],(0,y_offset))
             y_offset += heights_on[i]
-            new_im.paste(Image.fromarray(match_histograms(skimage.io.imread(files_off[i]), ref_off),(0, y_offset)))
+            new_im.paste(images_off[i],(0, y_offset))
             y_offset += heights_off[i]
 
         length += 2
