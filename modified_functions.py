@@ -134,9 +134,9 @@ def combine_pngs(name="", part=-1, freq=-1):
         else:
             try:
 
-                new_im.paste(Image.fromarray(match_histograms(asarray(images_on[i]), ref_on),'RGB'),(0, y_offset))
+                new_im.paste(Image.fromarray(match_histograms(asarray(images_on[i]), ref_on)),(0, y_offset))
                 y_offset += heights_on[i]
-                new_im.paste(Image.fromarray(match_histograms(asarray(images_off[i]), ref_off),'RGB'),(0, y_offset))
+                new_im.paste(Image.fromarray(match_histograms(asarray(images_off[i]), ref_off)),(0, y_offset))
                 y_offset += heights_off[i]
             except:
                 new_im.paste(Image.fromarray(match_histograms(asarray(images_on[i]), ref_on, channel_axis=-1),'RGB'),(0, y_offset))
