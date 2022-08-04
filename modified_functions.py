@@ -1,13 +1,10 @@
 import glob
 import os
-
-import cv2
 import matplotlib
 import matplotlib.pyplot as plt
 import numpy as np
 from PIL import Image, ImageOps
 from blimpy.utils import rebin
-from numpy import asarray
 from skimage.exposure import match_histograms
 
 MAX_IMSHOW_POINTS = (4096, 1268)
