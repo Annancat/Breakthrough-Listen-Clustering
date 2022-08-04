@@ -70,7 +70,7 @@ def waterfall_png(wf, name, f_start=None, f_stop=None,observation=0, part = 0, *
     if observation > 0:
         try:
             ref = np.array(Image.open(name + "0_" + str(part) + '.png'))
-            cur = np.array(Image.fromarray(normalized_plot_data,mode="RGBA"))
+            cur = np.array(Image.fromarray(plot_data,mode="RGBA"))
             normalized_plot_data = match_histograms(cur,ref,multichannel=True)
         except:
             observation = 0
