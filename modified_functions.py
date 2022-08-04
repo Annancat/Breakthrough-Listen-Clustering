@@ -74,6 +74,7 @@ def waterfall_png(wf, name, f_start=None, f_stop=None,observation=0, part = 0, *
             normalized_plot_data = (normalized_plot_data - normalized_plot_data.min()) / (normalized_plot_data.max() - normalized_plot_data.min())
         except:
             observation = 0
+            normalized_plot_data = (plot_data - v_min) / (v_max - v_min)
     else:
         normalized_plot_data = (plot_data - v_min) / (v_max - v_min)
     name = name + str(observation) + "_" + str(part) + '.png'
