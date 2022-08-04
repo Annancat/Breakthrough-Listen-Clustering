@@ -61,7 +61,7 @@ def waterfall_png(wf, name, f_start=None, f_stop=None, **kwargs):
         raise ValueError("*** Something is wrong with the grab_data output!")
 
     # plot and scale intensity (log vs. linear)
-    kwargs["cmap"] = kwargs.get("cmap", "viridis")
+    kwargs["cmap"] = kwargs.get("cmap", "gray")
     plot_data = 10.0 * np.log10(plot_data)
 
     # get normalization parameters
@@ -72,13 +72,7 @@ def waterfall_png(wf, name, f_start=None, f_stop=None, **kwargs):
     # Save waterfall plot at location
     # Really the only thing that has changed from plot_waterfall apart from removing axis and figure modifications.
     plt.imsave(name, normalized_plot_data, **kwargs)
-def normalize(x):
-    """
-    Normalize a list of sample image data in the range of 0 to 1
-    : x: List of image data.  The image shape is (32, 32, 3)
-    : return: Numpy array of normalized data
-    """
-    return np.array((x - np.min(x)) / (np.max(x) - np.min(x)))
+
 
 # TODO Normalise data better!
 def combine_pngs(name="", part=-1, freq=-1):
@@ -120,7 +114,7 @@ def combine_pngs(name="", part=-1, freq=-1):
     max_width = max([max(widths_on), max(widths_off)])
     total_height = (heights_on[0] * 3) + (heights_off[0] * 3)  # Images combined vertically.
 
-    new_im = Image.new('RGB', (max_width, total_height))
+    new_im = Image.new('L', (max_width, total_height))
 
     y_offset = 0
     version = 0
@@ -131,18 +125,17 @@ def combine_pngs(name="", part=-1, freq=-1):
     for i in range(0, len(images_on)):
 
         if y_offset == 0:
-            ref_on = images_on[i]
-            ref_off = images_off[i]
+            ref_on = skimage.io.imread(files_on[i])
+            ref_off = skimage.io.imread(files_off[i])
             new_im.paste(images_on[i], (0, y_offset))
             y_offset += heights_on[i]
             new_im.paste(images_off[i], (0, y_offset))
             y_offset += heights_off[i]
 
         else:
-            plt.imsave("tempImages/test" + str(i) + ".png",match_histograms(normalize(np.array(images_on[i])),normalize(np.array(ref_on))))
-            new_im.paste(images_on[i], (0, y_offset))
+            new_im.paste(Image.fromarray(match_histograms(skimage.io.imread(files_on[i]), ref_on),(0, y_offset)))
             y_offset += heights_on[i]
-            new_im.paste(images_off[i],(0,y_offset))
+            new_im.paste(Image.fromarray(match_histograms(skimage.io.imread(files_off[i]), ref_off),(0, y_offset)))
             y_offset += heights_off[i]
 
         length += 2
