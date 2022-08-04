@@ -68,8 +68,9 @@ def waterfall_png(wf, name, f_start=None, f_stop=None,part=0, **kwargs,):
     v_max = plot_data.max()
     normalized_plot_data = (plot_data - v_min) / (v_max - v_min)
     if part != 0:
-        ref = np.array(Image.open(name + "0.png"))
-        normalized_plot_data = match_histograms(normalized_plot_data,ref)
+        ref = Image.open(name + "0.png")
+        print(ref.mode)
+        #normalized_plot_data = match_histograms(normalized_plot_data,ref)
 
     name = name + str(part) + '.png'
     # Save waterfall plot at location
