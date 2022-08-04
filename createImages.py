@@ -22,11 +22,8 @@ def make_final_image(target="", total_parts=-1, freq=-1):
     for i in range(0, total_parts + 1):
         print("Creating final image for part " + str(i) +
               " of current target")
-        try:
-            modif.combine_pngs(target, i, freq)
-            print("Completed creating images for cadence " + cur_url + ", center frequency " + str(freq))
-        except Exception:
-            print("Skipping creating final image for cadence " + cur_url + ", center frequency " + str(freq))
+        modif.combine_pngs(target, i, freq)
+        print("Completed creating images for cadence " + cur_url + ", center frequency " + str(freq))
 
 
 if __name__ == '__main__':
