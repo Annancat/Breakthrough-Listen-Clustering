@@ -132,9 +132,9 @@ def combine_pngs(name="", part=-1, freq=-1):
             y_offset += heights_off[i]
 
         else:
-            new_im.paste(Image.fromarray(match_histograms(asarray(images_on[i]), ref_on)))
+            new_im.paste(Image.fromarray(match_histograms(asarray(images_on[i]), ref_on),'RGB'),(0, y_offset))
             y_offset += heights_on[i]
-            new_im.paste(Image.fromarray(match_histograms(asarray(images_off[i]), ref_off)))
+            new_im.paste(Image.fromarray(match_histograms(asarray(images_off[i]), ref_off),'RGB'),(0, y_offset))
             y_offset += heights_off[i]
 
         length += 2
