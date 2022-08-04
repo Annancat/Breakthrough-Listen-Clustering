@@ -71,7 +71,7 @@ def waterfall_png(wf, name, f_start=None, f_stop=None,observation=0, part = 0, *
         try:
             ref = np.array(Image.open(name + "0_" + str(part) + '.png'))
             cur = np.array(Image.fromarray(normalized_plot_data,mode="RGBA"))
-            normalized_plot_data = match_histograms(cur,ref)
+            normalized_plot_data = match_histograms(cur,ref,multichannel=True)
         except:
             observation = 0
     normalized_plot_data = Image.fromarray(normalized_plot_data,mode="RGBA")
@@ -121,7 +121,7 @@ def combine_pngs(name="", part=-1, freq=-1):
     max_width = max([max(widths_on), max(widths_off)])
     total_height = (heights_on[0] * 3) + (heights_off[0] * 3)  # Images combined vertically.
 
-    new_im = Image.new('RGBA', (max_width, total_height))
+    new_im = Image.new('RGB' , (max_width, total_height))
 
     y_offset = 0
     version = 0
