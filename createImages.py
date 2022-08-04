@@ -90,7 +90,7 @@ if __name__ == '__main__':
                                 f_stop=cur_freq + freq_range + cross_over)  # Starting slice. Allows no cutoff.
                 print("Loaded slice.")
                 modif.waterfall_png(fil, "tempImages/" + name + "_FREQ_" + str(center_freq_) + "_" +
-                                    str(observation) + "_" + str(part))
+                                    str(observation) + "_",part = part)
                 print("Made part " + str(part))
 
                 cur_freq += freq_range
@@ -103,7 +103,7 @@ if __name__ == '__main__':
                                     f_start=cur_freq, f_stop=cur_freq + freq_range + cross_over)  # Any middle slices
                     print("Loaded slice.")
                     modif.waterfall_png(fil, "tempImages/" + name + "_FREQ_" + str(center_freq_) + "_" +
-                                        str(observation) + "_" + str(part))
+                                        str(observation) + "_" ,part = part)
                     print("Made part " + str(part))
 
                     cur_freq += freq_range
@@ -115,7 +115,7 @@ if __name__ == '__main__':
                 # Ending Slice. Allows no cutoff. May overlap more with other slices but keeps the same width.
                 print("Loaded slice.")
                 modif.waterfall_png(fil, "tempImages/" + name + "_FREQ_" + str(center_freq_) + "_" +
-                                    str(observation) + "_" + str(part))
+                                    str(observation) + "_" ,part = part)
                 print("Made part " + str(part))
                 observation += 1
                 del fil

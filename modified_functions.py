@@ -13,7 +13,7 @@ MAX_IMSHOW_POINTS = (4096, 1268)
 matplotlib.use("agg")
 
 
-def waterfall_png(wf, name, f_start=None, f_stop=None, **kwargs):
+def waterfall_png(wf, name, f_start=None, f_stop=None,part=0, **kwargs,):
     r"""
     Modified from blimpy.stax.plot_waterfall.
     Create waterfall png from data in a .fil or .h5 file.
@@ -38,7 +38,6 @@ def waterfall_png(wf, name, f_start=None, f_stop=None, **kwargs):
     Removed automatic styling to imsave that cannot be changed by kwargs
     """
     # change to full file name
-    name = name + '.png'
 
     # Load in the data from fil
     plot_f, plot_data = wf.grab_data(f_start=f_start, f_stop=f_stop)
@@ -68,7 +67,11 @@ def waterfall_png(wf, name, f_start=None, f_stop=None, **kwargs):
     v_min = plot_data.min()
     v_max = plot_data.max()
     normalized_plot_data = (plot_data - v_min) / (v_max - v_min)
+    if part != 0:
+        ref = skimage.io.imread(name + "0.png")
+        normalized_plot_data = match_histograms(normalized_plot_data,ref)
 
+    name = name + str(part) + '.png'
     # Save waterfall plot at location
     # Really the only thing that has changed from plot_waterfall apart from removing axis and figure modifications.
     plt.imsave(name, normalized_plot_data, **kwargs)
