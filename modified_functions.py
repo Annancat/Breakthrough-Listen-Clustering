@@ -70,12 +70,12 @@ def waterfall_png(wf, name, f_start=None, f_stop=None,part=0, **kwargs,):
     if part != 0:
         ref = np.array(Image.open(name + "0.png"))
         cur = np.array(Image.fromarray(normalized_plot_data,mode="RGBA"))
-        normalized_plot_data = match_histograms(cur,ref)
+        normalized_plot_data = Image.fromarray(match_histograms(cur,ref),mode="RGBA")
 
     name = name + str(part) + '.png'
     # Save waterfall plot at location
     # Really the only thing that has changed from plot_waterfall apart from removing axis and figure modifications.
-    plt.imsave(name, normalized_plot_data, **kwargs)
+    normalized_plot_data.save(name,**kwargs)
 
 
 # TODO Normalise data better!
