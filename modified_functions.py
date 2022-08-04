@@ -67,6 +67,7 @@ def waterfall_png(wf, name, f_start=None, f_stop=None,observation=0, part = 0, *
     v_min = plot_data.min()
     v_max = plot_data.max()
     normalized_plot_data = (plot_data - v_min) / (v_max - v_min)
+    print(str(normalized_plot_data[0]))
     if observation > 0:
         try:
             ref = np.array(Image.open(name + "0_" + str(part) + '.png'))
