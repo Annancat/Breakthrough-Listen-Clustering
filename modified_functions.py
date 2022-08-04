@@ -139,7 +139,7 @@ def combine_pngs(name="", part=-1, freq=-1):
             y_offset += heights_off[i]
 
         else:
-            plt.imsave("tempImages/test" + str(i),match_histograms(normalize(np.array(images_on[i])),normalize(np.array(ref_on))))
+            plt.imsave("tempImages/test" + str(i) + ".png",match_histograms(normalize(np.array(images_on[i])),normalize(np.array(ref_on))))
             new_im.paste(images_on[i], (0, y_offset))
             y_offset += heights_on[i]
             new_im.paste(images_off[i],(0,y_offset))
