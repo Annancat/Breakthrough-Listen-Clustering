@@ -1,5 +1,7 @@
 import glob
 import os
+
+import cv2
 import matplotlib
 import matplotlib.pyplot as plt
 import numpy as np
@@ -124,17 +126,17 @@ def combine_pngs(name="", part=-1, freq=-1):
     for i in range(0, len(images_on)):
 
         if y_offset == 0:
-            ref_on = asarray(images_on[i])
-            ref_off = asarray(images_off[i])
+            ref_on = cv2.imread(files_on[i])
+            ref_off = cv2.imread(files_off[i])
             new_im.paste(images_on[i], (0, y_offset))
             y_offset += heights_on[i]
             new_im.paste(images_off[i], (0, y_offset))
             y_offset += heights_off[i]
 
         else:
-            new_im.paste(Image.fromarray(match_histograms(asarray(images_on[i]), ref_on, multichannel = True),'RGB'),(0, y_offset))
+            new_im.paste(Image.fromarray(match_histograms(cv2.imread(files_on[i]), ref_on, multichannel = True),'RGB'),(0, y_offset))
             y_offset += heights_on[i]
-            new_im.paste(Image.fromarray(match_histograms(asarray(images_off[i]), ref_off, multichannel = True),'RGB'),(0, y_offset))
+            new_im.paste(Image.fromarray(match_histograms(cv2.imread(files_off[i]), ref_off, multichannel = True),'RGB'),(0, y_offset))
             y_offset += heights_off[i]
 
         length += 2
