@@ -73,6 +73,7 @@ def waterfall_png(wf, name, f_start=None, f_stop=None,observation=0, part = 0, *
             ref = np.array(Image.open(name + "0_" + str(part) + '.png',"F"))
             normalized_plot_data = np.array(Image.fromarray(normalized_plot_data,"F"))
             normalized_plot_data = match_histograms(normalized_plot_data,ref)
+            normalized_plot_data = np.array(Image.fromarray(normalized_plot_data,"F"))
         except:
             observation = 0
     name = name + str(observation) + "_" + str(part) + '.png'
