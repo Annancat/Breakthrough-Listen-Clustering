@@ -107,9 +107,11 @@ def combine_pngs(name="", part=-1, freq=-1):
 
     images_on = [Image.open(x).convert("F") for x in files_on]
     widths_on, heights_on = zip(*(i.size for i in images_on))
+    images_on = [np.array(x) for x in images_on]
 
     images_off = [Image.open(x).convert("F") for x in files_off]
     widths_off, heights_off = zip(*(i.size for i in images_off))
+    images_off = [np.array(x) for x in images_off]
 
     max_width = max([max(widths_on), max(widths_off)])
     total_height = (heights_on[0] * 3) + (heights_off[0] * 3)  # Images combined vertically.
@@ -124,17 +126,24 @@ def combine_pngs(name="", part=-1, freq=-1):
 
     for i in range(0, len(images_on)):
         if y_offset == 0:
-            new_im.paste(images_on[i], (0, y_offset))
-            y_offset += heights_on[i]
-            new_im.paste(images_off[i], (0, y_offset))
-            y_offset += heights_off[i]
-        else:
-            matched = match_histograms(np.array(images_on[i]), np.array(images_on[i-1]), multichannel=True)
-            new_im.paste(Image.fromarray(matched, "F"), (0, y_offset))
-            y_offset += heights_on[i]
-            matched = match_histograms(np.array(images_off[i]), np.array(images_off[i-1]), multichannel=True)
-            new_im.paste(Image.fromarray(matched, "F"), (0, y_offset))
-            y_offset += heights_off[i]
+            if i+2< len(images_on):
+                min_on = 100000
+                min_off = 100000
+                for j in range(0,3):
+                    if images_on[i+j].mean() < min_on:
+                        min_on = images_on[i+j].mean
+                        ref_on = images_on[i+j]
+                    if images_off[i+j].mean() < min_off:
+                        min_off = images_off[i+j].mean
+                        ref_off = images_off[i+j]
+            else:
+                break
+        matched = match_histograms(images_on[i], ref_on, multichannel=True)
+        new_im.paste(Image.fromarray(matched, "F"), (0, y_offset))
+        y_offset += heights_on[i]
+        matched = match_histograms(images_off[i], ref_off, multichannel=True)
+        new_im.paste(Image.fromarray(matched, "F"), (0, y_offset))
+        y_offset += heights_off[i]
 
         length += 2
 
@@ -155,7 +164,7 @@ def combine_pngs(name="", part=-1, freq=-1):
             new_im = Image.new('RGB', (max_width, total_height))
             version += 1
 
-    if length != 0:
+    if length == 6:
         new_im = ImageOps.mirror(new_im)
         new_im = np.array(new_im)
         if part != -1:
