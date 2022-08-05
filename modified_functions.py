@@ -126,16 +126,9 @@ def combine_pngs(name="", part=-1, freq=-1):
 
     for i in range(0, len(images_on)):
         if y_offset == 0:
-            if i+2< len(images_on):
-                min_on = 100000
-                min_off = 100000
-                for j in range(0,3):
-                    if images_on[i+j].min() < min_on:
-                        min_on = images_on[i+j].mean
-                        ref_on = images_on[i+j]
-                    if images_off[i+j].min() < min_off:
-                        min_off = images_off[i+j].mean
-                        ref_off = images_off[i+j]
+            if i+2 < len(images_on):
+                ref_on = images_on[i]
+                ref_off = images_off[i]
             else:
                 break
         matched = match_histograms(images_on[i], ref_on, multichannel=True)
