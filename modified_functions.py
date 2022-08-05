@@ -68,20 +68,18 @@ def waterfall_png(wf, name, f_start=None, f_stop=None,observation=0, part = 0, *
     v_max = plot_data.max()
     normalized_plot_data = (plot_data - v_min) / (v_max - v_min)
     print(str(normalized_plot_data[0]))
-    """if observation > 0:
+    if observation > 0:
         try:
-            ref = np.array(Image.open(name + "0_" + str(part) + '.png',"RGBA"))
-            normalized_plot_data = np.array(Image.fromarray(normalized_plot_data,"RGBA"))
+            ref = np.array(Image.open(name + "0_" + str(part) + '.png',"F"))
+            normalized_plot_data = np.array(Image.fromarray(normalized_plot_data,"F"))
             normalized_plot_data = match_histograms(normalized_plot_data,ref)
         except:
-            observation = 0"""
+            observation = 0
     name = name + str(observation) + "_" + str(part) + '.png'
     #print(str(normalized_plot_data[0]))
-    normalized_plot_data = Image.fromarray(normalized_plot_data, "F")
-    normalized_plot_data = normalized_plot_data.convert("RGB")
     # Save waterfall plot at location
     # Really the only thing that has changed from plot_waterfall apart from removing axis and figure modifications.
-    normalized_plot_data.save(name,**kwargs)
+    plt.imsave(name, normalized_plot_data, **kwargs)
 
 
 # TODO Normalise data better!
