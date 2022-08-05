@@ -78,7 +78,7 @@ def waterfall_png(wf, name, f_start=None, f_stop=None,observation=0, part = 0, *
     print(str(normalized_plot_data[0]))
     # Save waterfall plot at location
     # Really the only thing that has changed from plot_waterfall apart from removing axis and figure modifications.
-    plt.imsave(name,normalized_plot_data,**kwargs)
+    Image.fromarray(normalized_plot_data).save(name,**kwargs)
 
 
 # TODO Normalise data better!
