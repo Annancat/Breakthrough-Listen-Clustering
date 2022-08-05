@@ -130,10 +130,10 @@ def combine_pngs(name="", part=-1, freq=-1):
                 min_on = 100000
                 min_off = 100000
                 for j in range(0,3):
-                    if images_on[i+j].mean() < min_on:
+                    if np.mean(images_on[i+j]) < min_on:
                         min_on = images_on[i+j].mean
                         ref_on = images_on[i+j]
-                    if images_off[i+j].mean() < min_off:
+                    if np.mean(images_off[i+j]) < min_off:
                         min_off = images_off[i+j].mean
                         ref_off = images_off[i+j]
             else:
