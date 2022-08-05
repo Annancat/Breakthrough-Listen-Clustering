@@ -46,7 +46,6 @@ if __name__ == '__main__':
         observation = 0
         name = ""
         frequencies = []
-        frequency_observations = dict()
         part = 0  # Initialised here to avoid errors.
         target = cadence_files[0]["target"]
         # Full observation split into files of different center frequencies -
@@ -85,14 +84,13 @@ if __name__ == '__main__':
                 center_freq_ = round(cadence_files[i]["center_freq"], 2)
                 if center_freq_ not in frequencies:
                     frequencies.append(center_freq_)
-                    frequency_observations[center_freq_] = 0
 
                 # Max load is in gb. Max load slightly more than what it takes to load the file just in case.
                 fil = Waterfall(path, max_load=blimpy.calcload.calc_max_load(path),
                                 f_stop=cur_freq + freq_range + cross_over)  # Starting slice. Allows no cutoff.
                 print("Loaded slice.")
                 modif.waterfall_png(fil, "tempImages/" + name + "_FREQ_" + str(center_freq_) + "_"
-                                    , observation=frequency_observations[center_freq_], part=part)
+                                    , observation=observation, part=part)
                 print("Made part " + str(part))
 
                 cur_freq += freq_range
@@ -105,7 +103,7 @@ if __name__ == '__main__':
                                     f_start=cur_freq, f_stop=cur_freq + freq_range + cross_over)  # Any middle slices
                     print("Loaded slice.")
                     modif.waterfall_png(fil, "tempImages/" + name + "_FREQ_" + str(center_freq_) + "_"
-                                        , observation=frequency_observations[center_freq_], part=part)
+                                        , observation=observation, part=part)
                     print("Made part " + str(part))
 
                     cur_freq += freq_range
@@ -117,9 +115,9 @@ if __name__ == '__main__':
                 # Ending Slice. Allows no cutoff. May overlap more with other slices but keeps the same width.
                 print("Loaded slice.")
                 modif.waterfall_png(fil, "tempImages/" + name + "_FREQ_" + str(center_freq_) + "_"
-                                    , observation=frequency_observations[center_freq_], part=part)
+                                    , observation=observation, part=part)
                 print("Made part " + str(part))
-                frequency_observations[center_freq_] += 1
+                observation +=1
                 del fil
                 print("\n-----------------------------")
                 print("Completed temporary images.")
