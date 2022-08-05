@@ -127,14 +127,13 @@ def combine_pngs(name="", part=-1, freq=-1):
     for i in range(0, len(images_on)):
         if y_offset == 0:
             if i+2 < len(images_on):
-                ref_on = images_on[i]
-                ref_off = images_off[i]
+                ref = images_on[i]
             else:
                 break
-        matched = match_histograms(images_on[i], ref_on, multichannel=True)
+        matched = match_histograms(images_on[i], ref, multichannel=True)
         new_im.paste(Image.fromarray(matched, "F"), (0, y_offset))
         y_offset += heights_on[i]
-        matched = match_histograms(images_off[i], ref_off, multichannel=True)
+        matched = match_histograms(images_off[i], ref, multichannel=True)
         new_im.paste(Image.fromarray(matched, "F"), (0, y_offset))
         y_offset += heights_off[i]
 
