@@ -77,7 +77,7 @@ def waterfall_png(wf, name, f_start=None, f_stop=None,observation=0, part = 0, *
             observation = 0"""
     name = name + str(observation) + "_" + str(part) + '.png'
     #print(str(normalized_plot_data[0]))
-    normalized_plot_data = Image.fromarray(normalized_plot_data, "RGBA")
+    normalized_plot_data = Image.fromarray(normalized_plot_data, "RGB")
     # Save waterfall plot at location
     # Really the only thing that has changed from plot_waterfall apart from removing axis and figure modifications.
     normalized_plot_data.save(name,**kwargs)
@@ -123,7 +123,7 @@ def combine_pngs(name="", part=-1, freq=-1):
     max_width = max([max(widths_on), max(widths_off)])
     total_height = (heights_on[0] * 3) + (heights_off[0] * 3)  # Images combined vertically.
 
-    new_im = Image.new('RGBA' , (max_width, total_height))
+    new_im = Image.new('RGB' , (max_width, total_height))
 
     y_offset = 0
     version = 0
