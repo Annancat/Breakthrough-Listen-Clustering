@@ -63,29 +63,42 @@ if __name__ == '__main__':
 
                 else:
                     print(path + " exists.\nTrying to make temp images")
-                try:
-                    # Only needs the header from the file to get the frequencies.
-                    fil = Waterfall(path, load_data=False)
-                    freqs = fil.get_freqs()
-                    max_freq = freqs[0]
-                    cur_freq = int(math.ceil(freqs[-1]))
-                    # Floats do not work well with slicing. Current starting frequency for slices.
-                    print("Getting frequencies from file.")
+                # Only needs the header from the file to get the frequencies.
+                fil = Waterfall(path, load_data=False)
+                freqs = fil.get_freqs()
+                max_freq = freqs[0]
+                cur_freq = int(math.ceil(freqs[-1]))
+                # Floats do not work well with slicing. Current starting frequency for slices.
+                print("Getting frequencies from file.")
 
-                    part = 0
-                    if cadence_files[i]["target"] == target:
-                        name = target + "_ON_"  # ON observation - pointing at target
-                    else:
-                        name = target + "_OFF_"  # OFF observation - not pointing at target
+                part = 0
+                if cadence_files[i]["target"] == target:
+                    name = target + "_ON_"  # ON observation - pointing at target
+                else:
+                    name = target + "_OFF_"  # OFF observation - not pointing at target
 
-                    # Keeping track of the different frequencies.
-                    center_freq_ = round(cadence_files[i]["center_freq"], 2)
-                    if center_freq_ not in frequencies:
-                        frequencies.append(center_freq_)
+                # Keeping track of the different frequencies.
+                center_freq_ = round(cadence_files[i]["center_freq"], 2)
+                if center_freq_ not in frequencies:
+                    frequencies.append(center_freq_)
 
-                    # Max load is in gb. Max load slightly more than what it takes to load the file just in case.
+                # Max load is in gb. Max load slightly more than what it takes to load the file just in case.
+                fil = Waterfall(path, max_load=blimpy.calcload.calc_max_load(path),
+                                f_stop=cur_freq + freq_range + cross_over)  # Starting slice. Allows no cutoff.
+                print("Loaded slice.")
+                modif.waterfall_png(fil, "tempImages/" + name + "_FREQ_" + str(center_freq_) + "_"
+                                    , observation=observation, part=part)
+                print("Made part " + str(part))
+
+                cur_freq += freq_range
+                part += 1
+                del fil
+
+                # Splits any remaining range.
+                while cur_freq <= max_freq - (freq_range + cross_over):
                     fil = Waterfall(path, max_load=blimpy.calcload.calc_max_load(path),
-                                    f_stop=cur_freq + freq_range + cross_over)  # Starting slice. Allows no cutoff.
+                                    f_start=cur_freq,
+                                    f_stop=cur_freq + freq_range + cross_over)  # Any middle slices
                     print("Loaded slice.")
                     modif.waterfall_png(fil, "tempImages/" + name + "_FREQ_" + str(center_freq_) + "_"
                                         , observation=observation, part=part)
@@ -95,45 +108,22 @@ if __name__ == '__main__':
                     part += 1
                     del fil
 
-                    # Splits any remaining range.
-                    while cur_freq <= max_freq - (freq_range + cross_over):
-                        fil = Waterfall(path, max_load=blimpy.calcload.calc_max_load(path),
-                                        f_start=cur_freq,
-                                        f_stop=cur_freq + freq_range + cross_over)  # Any middle slices
-                        print("Loaded slice.")
-                        modif.waterfall_png(fil, "tempImages/" + name + "_FREQ_" + str(center_freq_) + "_"
-                                            , observation=observation, part=part)
-                        print("Made part " + str(part))
-
-                        cur_freq += freq_range
-                        part += 1
-                        del fil
-
-                    fil = Waterfall(path, max_load=blimpy.calcload.calc_max_load(path),
-                                    f_start=int(round(max_freq - (max_freq - cur_freq)) - cross_over))
-                    # Ending Slice. Allows no cutoff. May overlap more with other slices but keeps the same width.
-                    print("Loaded slice.")
-                    modif.waterfall_png(fil, "tempImages/" + name + "_FREQ_" + str(center_freq_) + "_"
-                                        , observation=observation, part=part)
-                    print("Made part " + str(part))
-                    observation += 1
-                    del fil
-                    print("\n-----------------------------")
-                    print("Completed temporary images.")
-                    print("-----------------------------\n")
-                except:
-                    "Something went wrong when creating the temp images!"
-                    break
-
+                fil = Waterfall(path, max_load=blimpy.calcload.calc_max_load(path),
+                                f_start=int(round(max_freq - (max_freq - cur_freq)) - cross_over))
+                # Ending Slice. Allows no cutoff. May overlap more with other slices but keeps the same width.
+                print("Loaded slice.")
+                modif.waterfall_png(fil, "tempImages/" + name + "_FREQ_" + str(center_freq_) + "_"
+                                    , observation=observation, part=part)
+                print("Made part " + str(part))
+                observation += 1
+                del fil
+                print("\n-----------------------------")
+                print("Completed temporary images.")
+                print("-----------------------------\n")
 
         # Actual creation of final images
-        try:
-            for j in range(0, len(frequencies)):
-                make_final_image(target, part, frequencies[j])
-        except:
-            "Skipping!"
-            continue
-
+        for j in range(0, len(frequencies)):
+            make_final_image(target, part, frequencies[j])
 
         cur_url = urls.readline()
 
