@@ -31,8 +31,6 @@ if __name__ == '__main__':
     # Removes any old images that could affect the naming scheme of the pngs.
     shutil.rmtree("tempImages")
     os.mkdir("tempImages")
-    shutil.rmtree("images")
-    os.mkdir("images")
 
     api = api_requests.OpendataAPI()
     urls = open("urls_cleaned.txt", "r")  # URLs from api_requests.py
@@ -124,7 +122,8 @@ if __name__ == '__main__':
                     print("Completed temporary images.")
                     print("-----------------------------\n")
                 except:
-                    continue
+                    "Something went wrong when creating the temp images!"
+                    break
 
 
         # Actual creation of final images
@@ -132,6 +131,11 @@ if __name__ == '__main__':
             for j in range(0, len(frequencies)):
                 make_final_image(target, part, frequencies[j])
         except:
+            "Skipping!"
             continue
 
+
         cur_url = urls.readline()
+
+    shutil.rmtree("tempImages")
+    os.mkdir("tempImages")
