@@ -150,7 +150,7 @@ def combine_pngs(name="", part=-1, freq=-1):
                     '.png', new_im)
 
             else:
-                occurrences = sorted(glob.glob(os.path.join("images", name + '_*.png')))
+                occurrences = sorted(glob.glob(os.path.join("input/images", name + '_*.png')))
                 plt.imsave('images/' + name + "_FREQ_" + str(freq) + "_" + str(len(occurrences) + 1) + "_" +
                            str(version) + '.png', new_im)
             y_offset = 0
@@ -165,7 +165,7 @@ def combine_pngs(name="", part=-1, freq=-1):
                        '.png', new_im)
 
         else:
-            occurrences = sorted(glob.glob(os.path.join("images", name + '_*.png')))
+            occurrences = sorted(glob.glob(os.path.join("input/images", name + '_*.png')))
             plt.imsave(
                 'images/' + name + "_FREQ_" + str(freq) + "_" + str(len(occurrences) + 1) + "_" + str(version) +
                 '.png', new_im)
