@@ -132,10 +132,14 @@ if __name__ == '__main__':
     shutil.rmtree("tempImages")
 
     print("Created all images. Splitting into training and test data.")
-
-    splitfolders.ratio(parameters.SAVE_LOCATION + "images", parameters.SAVE_LOCATION,
+    if os.path.exists(parameters.SAVE_LOCATION + "train"):
+        shutil.rmtree(parameters.SAVE_LOCATION + "train")
+    if os.path.exists(parameters.SAVE_LOCATION + "test"):
+        shutil.rmtree(parameters.SAVE_LOCATION + "test")
+    if os.path.exists(parameters.SAVE_LOCATION + "val"):
+        shutil.rmtree(parameters.SAVE_LOCATION + "val")
+    splitfolders.ratio(parameters.SAVE_LOCATION, parameters.SAVE_LOCATION,
                        seed=1337, ratio=parameters.SPLIT_RATIO)
-
     if not os.path.exists(parameters.SAVE_LOCATION + "test"):
         os.rename(parameters.SAVE_LOCATION + "val", parameters.SAVE_LOCATION + "test")
 

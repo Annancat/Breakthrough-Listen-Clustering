@@ -130,10 +130,16 @@ def combine_pngs(name="", part=-1, freq=-1):
                 ref_off = images_off[i]
             else:
                 break
-        matched = match_histograms(images_on[i], ref_on, multichannel=True)
+        try:
+            matched = match_histograms(images_on[i], ref_on, multichannel=True)
+        except TypeError:
+            matched = match_histograms(images_on[i], ref_on, channel_axis=-1)
         new_im.paste(Image.fromarray(matched, "F"), (0, y_offset))
         y_offset += heights_on[i]
-        matched = match_histograms(images_off[i], ref_off, multichannel=True)
+        try:
+            matched = match_histograms(images_off[i], ref_off, multichannel=True)
+        except TypeError:
+            matched = match_histograms(images_off[i], ref_off, channel_axis=-1)
         new_im.paste(Image.fromarray(matched, "F"), (0, y_offset))
         y_offset += heights_off[i]
 
