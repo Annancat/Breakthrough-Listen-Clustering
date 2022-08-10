@@ -33,6 +33,9 @@ if __name__ == '__main__':
     if os.path.exists("tempImages"):
         shutil.rmtree("tempImages")
     os.mkdir("tempImages")
+    if not os.path.exists(parameters.SAVE_LOCATION + "images"):
+        os.mkdir(parameters.SAVE_LOCATION + "images")
+
 
     api = api_requests.OpendataAPI()
     urls = open("urls_cleaned.txt", "r")  # URLs from api_requests.py
