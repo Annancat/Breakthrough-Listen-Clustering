@@ -1,3 +1,13 @@
+"""
+Made for converting filterbank files into waterfall pngs to be fed
+into an autoencoder. Requires the urls created and cleaned by create_urls.py to function.
+Separated from api_requests.py so that the urls do not need to be gathered through api requests every time.
+Assumes that it has access to the files via converting the urls and does not need to download them - downloading them
+as the converter ran would be even more costly than it already is!
+
+Multiple parameters can be changed by going to parameters.py under the Image Processing section.
+"""
+
 import math
 import os
 import shutil
@@ -6,17 +16,7 @@ from blimpy import Waterfall
 import api_requests
 import modified_functions as modif
 import parameters
-from parameters import FREQ_RANGE, CROSS_OVER
-
-"""
-Made for converting filterbank files into waterfall pngs to be fed
-into a CNN. Requires the urls from api_requests.py to function.
-Separated from api_requests.py so that the urls do not need to be gathered through api requests every time.
-Assumes that it has access to the files via converting the urls and does not need to download them - downloading them
-as the converter ran would be even more costly than it already is!
-
-If you would like to change the size of the slices, please go to parameters.py
-"""
+import splitfolders
 
 
 def make_final_image(target="", total_parts=-1, freq=-1):
@@ -37,8 +37,8 @@ if __name__ == '__main__':
     api = api_requests.OpendataAPI()
     urls = open("urls_cleaned.txt", "r")  # URLs from api_requests.py
     cur_url = urls.readline()
-    freq_range = FREQ_RANGE  # The frequency range in Mhz for each image
-    cross_over = CROSS_OVER  # How much the splits cross over in Mhz
+    freq_range = parameters.FREQ_RANGE  # The frequency range in Mhz for each image
+    cross_over = parameters.CROSS_OVER  # How much the splits cross over in Mhz
 
     while cur_url != "":
 
@@ -88,8 +88,8 @@ if __name__ == '__main__':
                 fil = Waterfall(path, max_load=blimpy.calcload.calc_max_load(path),
                                 f_stop=cur_freq + freq_range + cross_over)  # Starting slice. Allows no cutoff.
                 print("Loaded slice.")
-                modif.waterfall_png(fil, "tempImages/" + name + "_FREQ_" + str(center_freq_) + "_"
-                                    , observation=observation, part=part)
+                modif.waterfall_png(fil, "tempImages/" + name + "_FREQ_" + str(center_freq_) + "_",
+                                    observation=observation, part=part)
                 print("Made part " + str(part))
 
                 cur_freq += freq_range
@@ -102,8 +102,8 @@ if __name__ == '__main__':
                                     f_start=cur_freq,
                                     f_stop=cur_freq + freq_range + cross_over)  # Any middle slices
                     print("Loaded slice.")
-                    modif.waterfall_png(fil, "tempImages/" + name + "_FREQ_" + str(center_freq_) + "_"
-                                        , observation=observation, part=part)
+                    modif.waterfall_png(fil, "tempImages/" + name + "_FREQ_" + str(center_freq_) + "_",
+                                        observation=observation, part=part)
                     print("Made part " + str(part))
 
                     cur_freq += freq_range
@@ -114,8 +114,8 @@ if __name__ == '__main__':
                                 f_start=int(round(max_freq - (max_freq - cur_freq)) - cross_over))
                 # Ending Slice. Allows no cutoff. May overlap more with other slices but keeps the same width.
                 print("Loaded slice.")
-                modif.waterfall_png(fil, "tempImages/" + name + "_FREQ_" + str(center_freq_) + "_"
-                                    , observation=observation, part=part)
+                modif.waterfall_png(fil, "tempImages/" + name + "_FREQ_" + str(center_freq_) + "_",
+                                    observation=observation, part=part)
                 print("Made part " + str(part))
                 observation += 1
                 del fil
@@ -130,3 +130,13 @@ if __name__ == '__main__':
         cur_url = urls.readline()
 
     shutil.rmtree("tempImages")
+
+    print("Created all images. Splitting into training and test data.")
+
+    splitfolders.ratio(parameters.SAVE_LOCATION + "images", parameters.SAVE_LOCATION,
+                       seed=1337, ratio=parameters.SPLIT_RATIO)
+
+    if not os.path.exists(parameters.SAVE_LOCATION + "test"):
+        os.rename(parameters.SAVE_LOCATION + "val", parameters.SAVE_LOCATION + "test")
+
+    print("Images have been split into training and test folders.\nImage processing complete.")

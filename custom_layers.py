@@ -1,20 +1,9 @@
-from time import time
-import numpy as np
+__author__ =  "Chengwei Zhang"
+__license__ = "MIT"
+
 from tensorflow.python.keras import backend as K
 from tensorflow.python.keras.layers import Layer, InputSpec, Dense, Input
 from tensorflow.python.keras.models import Model
-from tensorflow.keras.optimizers import SGD
-from tensorflow.python.keras import callbacks
-from tensorflow.python.keras.initializers import VarianceScaling
-import tensorflow as tf
-from sklearn.cluster import KMeans
-import metrics
-
-import matplotlib.pyplot as plt
-from sklearn.metrics import silhouette_score
-import cv2
-import os, glob, shutil
-
 
 def autoencoder(dims, act='relu', init='glorot_uniform'):
     """
