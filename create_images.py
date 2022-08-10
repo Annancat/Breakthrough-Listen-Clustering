@@ -5,6 +5,7 @@ import blimpy.calcload
 from blimpy import Waterfall
 import api_requests
 import modified_functions as modif
+import parameters
 from parameters import FREQ_RANGE, CROSS_OVER
 
 """
@@ -29,7 +30,8 @@ def make_final_image(target="", total_parts=-1, freq=-1):
 if __name__ == '__main__':
 
     # Removes any old images that could affect the naming scheme of the pngs.
-    shutil.rmtree("tempImages")
+    if os.path.exists("tempImages"):
+        shutil.rmtree("tempImages")
     os.mkdir("tempImages")
 
     api = api_requests.OpendataAPI()
@@ -51,7 +53,7 @@ if __name__ == '__main__':
 
         for i in range(0, len(cadence_files)):
 
-            if "0002.fil" in cadence_files[i]["url"]:
+            if "000" + str(parameters.RESOLUTION) + ".fil" in cadence_files[i]["url"]:
                 # Converts url into location on server.
                 path = cadence_files[i]["url"].replace(
                     "http://", "/mnt_").replace(".ssl.berkeley.edu", "/datax").replace("datax/dl2", "datax2/dl")
@@ -128,4 +130,3 @@ if __name__ == '__main__':
         cur_url = urls.readline()
 
     shutil.rmtree("tempImages")
-    os.mkdir("tempImages")

@@ -3,10 +3,9 @@ import os
 import matplotlib
 import matplotlib.pyplot as plt
 import numpy as np
-import skimage.io
+import parameters
 from PIL import Image, ImageOps
 from blimpy.utils import rebin
-from numpy import asarray
 from skimage.exposure import match_histograms
 
 MAX_IMSHOW_POINTS = (4096, 1268)
@@ -67,7 +66,7 @@ def waterfall_png(wf, name, f_start=None, f_stop=None, observation=0, part=0, **
     v_min = plot_data.min()
     v_max = plot_data.max()
     normalized_plot_data = (plot_data - v_min) / (v_max - v_min)
-    name = name + str(observation) + "_" + str(part) + '.png'
+    name = name + str(observation) + "_" + str(part) + ".png"
 
     # Save waterfall plot at location
     # Really the only thing that has changed from plot_waterfall apart from removing axis and figure modifications.
@@ -116,7 +115,7 @@ def combine_pngs(name="", part=-1, freq=-1):
     max_width = max([max(widths_on), max(widths_off)])
     total_height = (heights_on[0] * 3) + (heights_off[0] * 3)  # Images combined vertically.
 
-    new_im = Image.new('F', (max_width, total_height))
+    new_im = Image.new("F", (max_width, total_height))
 
     y_offset = 0
     version = 0
@@ -145,30 +144,29 @@ def combine_pngs(name="", part=-1, freq=-1):
             new_im = ImageOps.mirror(new_im)
             new_im = np.array(new_im)
             if part != -1:
-                plt.imsave(
-                    'images/' + name + "_FREQ_" + str(freq) + "_PART_" + str(part) + "_" + str(version) +
-                    '.png', new_im)
+                plt.imsave(parameters.SAVE_LOCATION +
+                    "images/" + name + "_FREQ_" + str(freq) + "_PART_" + str(part) + "_" + str(version) +
+                    ".png", new_im)
 
             else:
-                occurrences = sorted(glob.glob(os.path.join("input/images", name + '_*.png')))
-                plt.imsave('images/' + name + "_FREQ_" + str(freq) + "_" + str(len(occurrences) + 1) + "_" +
-                           str(version) + '.png', new_im)
+                occurrences = sorted(glob.glob(os.path.join("input/images", name + "_*.png")))
+                plt.imsave(parameters.SAVE_LOCATION + "images/" + name + "_FREQ_" + str(freq) + "_"
+                           + str(len(occurrences) + 1) + "_" + str(version) + ".png", new_im)
             y_offset = 0
-            new_im = Image.new('RGB', (max_width, total_height))
+            new_im = Image.new("RGB", (max_width, total_height))
             version += 1
 
     if length == 6:
         new_im = ImageOps.mirror(new_im)
         new_im = np.array(new_im)
         if part != -1:
-            plt.imsave('images/' + name + "_FREQ_" + str(freq) + "_PART_" + str(part) + "_" + str(version) +
-                       '.png', new_im)
+            plt.imsave(parameters.SAVE_LOCATION + "images/" + name + "_FREQ_" + str(freq) + "_PART_" + str(part) + "_"
+                       + str(version) + ".png", new_im)
 
         else:
-            occurrences = sorted(glob.glob(os.path.join("input/images", name + '_*.png')))
-            plt.imsave(
-                'images/' + name + "_FREQ_" + str(freq) + "_" + str(len(occurrences) + 1) + "_" + str(version) +
-                '.png', new_im)
+            occurrences = sorted(glob.glob(os.path.join(parameters.SAVE_LOCATION + "images/", name + "_*.png")))
+            plt.imsave(parameters.SAVE_LOCATION + "images/" + name + "_FREQ_" + str(freq) + "_" +
+                       str(len(occurrences) + 1) + "_" + str(version) + ".png", new_im)
 
     for file in files_on:
         os.remove(file)  # So temp images do not get mixed up with future observations.
