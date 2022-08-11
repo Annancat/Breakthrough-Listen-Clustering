@@ -1,0 +1,10 @@
+blimpy==2.0.11
+matplotlib==3.2.1
+numpy==1.20.3
+Pillow==7.2.0
+requests==2.27.1
+scikit-image==0.16.2
+scikit-learn==0.22.1
+tensorflow==2.6.2
+split-folders==0.5.1
+opencv-python==4.6.0.66
